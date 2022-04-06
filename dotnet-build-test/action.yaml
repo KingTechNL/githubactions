@@ -1,0 +1,44 @@
+# Static information for this action template
+# Source: https://github.com/GitTools/actions
+name: ".NET Test"
+description: "Build and test a dotnet project"
+
+# Inputs (parameters) for this action
+inputs:
+  dotnet-version:
+    description: The dotnet version of the project to build and test.
+    required: false
+    default: 6.0.x
+  test-output:
+    description: Output file for test results, used for report generation.
+    required: false
+    default: "test-results.trx"
+
+# Steps to run
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: ${{inputs.dotnet-version}}
+
+    # Build projects
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    # Run all unittests
+    - name: Test
+      run: dotnet test --no-build --logger "trx;LogFileName=${{inputs.test-output}}" || true
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: DotNET Tests
+        path: "**/${{inputs.test-output}}"                            
+        reporter: dotnet-trx
+        fail-on-error: true
