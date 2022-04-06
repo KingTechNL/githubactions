@@ -25,13 +25,16 @@ runs:
 
     # Build projects
     - name: Restore dependencies
+      shell: bash
       run: dotnet restore
 
     - name: Build
+      shell: bash
       run: dotnet build --no-restore
 
     # Run all unittests
     - name: Test
+      shell: bash
       run: dotnet test --no-build --logger "trx;LogFileName=${{inputs.test-output}}" || true
 
     - name: Test Report
