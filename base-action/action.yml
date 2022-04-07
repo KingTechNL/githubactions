@@ -24,9 +24,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    ### Checkout repo
-    - uses: actions/checkout@v3
-
     ### Build and test all projects
     - name: .NET Test
       uses: ./dotnet-build-test
