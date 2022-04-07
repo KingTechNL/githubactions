@@ -4,9 +4,6 @@ description: "Get all filenames within a specified directory"
 
 # Inputs (parameters) for this action
 inputs:
-  id:
-    description: "Id for getting output"
-    required: true
   base_directory:
     description: "The base directory to search for files"
     required: false
@@ -29,6 +26,5 @@ runs:
 
     - name: search files
       shell: bash
-      id: ${{ inputs.id }}
       #run: echo ::set-output name=files::"$SOME_OUTPUT"
       run: echo ::set-output name=files::"find ${{ inputs.base_directory }} | grep -e '${{ inputs.filter }}' |  xargs stat --printf '%n %F %g %u %X %Z %Y %s %A\n'"
