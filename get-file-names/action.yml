@@ -19,17 +19,15 @@ inputs:
 outputs:
   files:
     description: "The files found by this action"
-    value: ${{ steps.search-files.outputs.resulting-files }}
+    value: ${{ steps.search-files.outputs.search-result }}
   
 runs:
   using: "composite"
   steps:
 
-    - name: search files
-      id: search-files
+    - id: search-files
       shell: bash
       #run: echo ::set-output name=files::"$SOME_OUTPUT"
       run: |
-        $output = "some_output"
-        echo "::set-output name=resulting-files::$output"
+        echo "::set-output name=search-result::$(echo $RANDOM)"
       #"find ${{ inputs.base_directory }} | grep -e '${{ inputs.filter }}' |  xargs stat --printf '%n %F %g %u %X %Z %Y %s %A\n'"
