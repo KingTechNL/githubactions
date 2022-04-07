@@ -34,6 +34,17 @@ runs:
       with:
         test-output: "test-results.trx"
 
+    ### Publish nugets
+    - name: Get nuget projects
+      uses: gvdmeijde/githubactions/get-file-names
+      with:
+        id: get_nuget_files
+
+    - name: Print files
+      shell: bash
+      run: |
+          echo '${{ steps.get_nuget_files.outputs.var }}'
+
     ### Build and publish SimpleWebServer image to dockerhub
     - name: docker build
       if: success() && "${{ github.event.inputs.docker_registry_username != '' }}" && "${{ github.event.inputs.docker_registry_password != '' }}"

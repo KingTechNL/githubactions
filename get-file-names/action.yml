@@ -1,0 +1,34 @@
+# Static information for this action template
+name: "Get files"
+description: "Get all filenames within a specified directory"
+
+# Inputs (parameters) for this action
+inputs:
+  id:
+    description: "Id for getting output"
+    required: true
+  base_directory:
+    description: "The base directory to search for files"
+    required: false
+    default: "/"
+  recurse:
+    description: "Recurse into subdirectories"
+    required: false
+    default: false
+  filter:
+    description: "Regex filter for searching files"
+    required: false
+    default: "*"
+outputs:
+  files:
+    description: "The files found by this action"
+  
+runs:
+  using: "composite"
+  steps:
+
+    - name: search files
+      shell: bash
+      id: ${{ inputs.id }}
+      #run: echo ::set-output name=files::"$SOME_OUTPUT"
+      run: echo ::set-output name=files::"find ${{ inputs.base_directory }} | grep -e '${{ inputs.filter }}' |  xargs stat --printf '%n %F %g %u %X %Z %Y %s %A\n'"
