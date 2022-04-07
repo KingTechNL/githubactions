@@ -1,0 +1,27 @@
+name: Docker publish
+
+# Triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+#: Jobs to execute
+jobs:
+  ## Build all projects
+  build:
+    runs-on: self-hosted
+    steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+
+    ### Build and publish SimpleWebServer image to dockerhub
+    - name: docker build
+      uses: gvdmeijde/githubactions/publish-docker@main
+      with:
+        registry_username: "${{ secrets.DOCKERHUB_USERNAME }}" #Username from github secrets
+        registry_password: "${{ secrets.DOCKERHUB_TOKEN }}" #Password from github secrets
+        image_name: "myDockerImage"
+        tag: "latest" #Optional
+        docker_file: "Dockerfile" #Optional

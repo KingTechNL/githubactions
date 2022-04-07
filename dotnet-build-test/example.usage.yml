@@ -1,0 +1,28 @@
+name: .NET build
+
+# Triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# Set environment variables
+env:
+  TEST_OUTPUT: "test-results.trx"
+
+#: Jobs to execute
+jobs:
+  ## Build all projects
+  build:
+    runs-on: self-hosted
+    
+    steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+
+    ### Build and test all projects
+    - name: .NET Test
+      uses: gvdmeijde/githubactions/dotnet-build-test@main
+      with:
+        test-output: ${{env.TEST_OUTPUT}}

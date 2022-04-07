@@ -1,0 +1,45 @@
+# Static information for this action template
+# Source: https://github.com/GitTools/actions
+name: ".NET Test"
+description: "Build and test a dotnet project"
+
+# Inputs (parameters) for this action
+inputs:
+  dotnet-version:
+    description: The dotnet version of the project to build and test.
+    required: false
+    default: 6.0.x
+  docker_registry_username:
+    description: "Username for docker image registry"
+    required: false
+  docker_registry_password:
+    description: "Password for docker image registry"
+    required: false
+  docker_file:
+    description: "name of the dockerfile to use. Default: Dockerfile"
+    required: false
+    default: "Dockerfile"
+  
+# Steps to run
+runs:
+  using: "composite"
+  steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+
+    ### Build and test all projects
+    - name: .NET Test
+      uses: ./dotnet-build-test
+      with:
+        test-output: "test-results.trx"
+
+    ### Build and publish SimpleWebServer image to dockerhub
+    - name: docker build
+      if: success() && "${{ github.event.inputs.docker_registry_username != '' }}" && "${{ github.event.inputs.docker_registry_password != '' }}"
+      uses: ./publish-docker
+      with:
+        registry_username: "${{ inputs.docker_registry_username }}"
+        registry_password: "${{ inputs.docker_registry_password }}"
+        image_name: "simplefileserver"
+        tag: "latest"
+        docker_file: "${{ inputs.docker_file }}"
