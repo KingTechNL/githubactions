@@ -36,7 +36,7 @@ runs:
 
     ### Publish nugets
     - name: Get nuget projects
-      uses: gvdmeijde/githubactions/get-file-names
+      uses: gvdmeijde/githubactions/get-file-names@main
       with:
         id: get_nuget_files
 
