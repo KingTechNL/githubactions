@@ -29,5 +29,5 @@ runs:
       shell: bash
       #run: echo ::set-output name=files::"$SOME_OUTPUT"
       run: |
-        echo "::set-output name=search-result::$(echo $RANDOM)"
+        echo "::set-output name=search-result::$(echo find . -type f -name "${{ inputs.filter}}")"
       #"find ${{ inputs.base_directory }} | grep -e '${{ inputs.filter }}' |  xargs stat --printf '%n %F %g %u %X %Z %Y %s %A\n'"

@@ -38,6 +38,8 @@ runs:
     - name: Get nuget projects
       id: get_nuget_files
       uses: gvdmeijde/githubactions/get-file-names@main
+      with:
+        filter: "*.NuGet.csproj"
 
     - name: Print files
       shell: bash
