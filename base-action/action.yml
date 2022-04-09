@@ -48,19 +48,19 @@ runs:
           done
 
           
-      - name: Fetch action
-        id: get_nuget_files2
-        uses: Rishabh510/Path-lister-action@master
-        with:
-          path: "/"
-          type: "*.NuGet.csproj"
+    - name: Fetch action
+      id: get_nuget_files2
+      uses: Rishabh510/Path-lister-action@master
+      with:
+        path: "/"
+        type: "*.NuGet.csproj"
 
-      - name: Output results
-        run: |
-          echo "Found ${{ steps.get_nuget_files2.outputs.path_count }} file(s) with this extension:"
-          for i in ${{ steps.get_nuget_files2.outputs.paths }}; do
-          echo $i
-          done
+    - name: Output results
+      run: |
+        echo "Found ${{ steps.get_nuget_files2.outputs.path_count }} file(s) with this extension:"
+        for i in ${{ steps.get_nuget_files2.outputs.paths }}; do
+        echo $i
+        done
 
     ### Build and publish SimpleWebServer image to dockerhub
     - name: docker build
