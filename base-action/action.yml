@@ -35,8 +35,8 @@ runs:
         test-output: "test-results.trx"
 
     ### Get version number
-    - name: Get nuget projects
-      id: get_nuget_files
+    - name: Get version
+      id: get_version
       uses: gvdmeijde/githubactions/gitversion@main
 
     ### Publish nugets
