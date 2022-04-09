@@ -51,6 +51,7 @@ runs:
       additionalArguments: "${{inputs.additionalArguments}}"
 
   - name: Display GitVersion outputs
+    shell: bash
     run: |
       echo "Major: ${{ steps.gitversion.outputs.major }}"
       echo "Minor: ${{ steps.gitversion.outputs.minor }}"
