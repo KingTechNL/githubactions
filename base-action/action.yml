@@ -42,6 +42,7 @@ runs:
         filter: "*.NuGet.csproj"
 
     - name: Print files
+      shell: bash
       run: |
           for i in ${{ steps.get_nuget_files.outputs.files }}; do
           echo $i
@@ -56,6 +57,7 @@ runs:
         type: "*.NuGet.csproj"
 
     - name: Output results
+      shell: bash
       run: |
         echo "Found ${{ steps.get_nuget_files2.outputs.path_count }} file(s) with this extension:"
         for i in ${{ steps.get_nuget_files2.outputs.paths }}; do
