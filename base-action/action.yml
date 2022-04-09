@@ -44,7 +44,9 @@ runs:
     - name: Print files
       shell: bash
       run: |
-          echo files: ${{ steps.get_nuget_files.outputs.files }}
+          for f in ${{ steps.get_nuget_files.outputs.files }}; do
+            echo $f detected
+          done
 
     ### Build and publish SimpleWebServer image to dockerhub
     - name: docker build
