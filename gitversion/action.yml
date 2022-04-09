@@ -1,5 +1,6 @@
 # Static information for this action template
 # Source: https://github.com/GitTools/actions
+# Note: Make sure the checkout action is called with:  fetch-depth: 0
 name: "Get GitVersion"
 description: "Get the GitVersion version number for this build"
 
@@ -49,6 +50,11 @@ runs:
       updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
       updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
       additionalArguments: "${{inputs.additionalArguments}}"
+
+  - name: Set environment variable
+    shell: bash
+    run: echo "VERSION=${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_ENV
+    #Retrieve by using:  'echo $VERSION'  or  'echo ${{ env.VERSION }}'
 
   - name: Display GitVersion outputs
     shell: bash
