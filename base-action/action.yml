@@ -54,7 +54,7 @@ runs:
       uses: Rishabh510/Path-lister-action@master
       with:
         path: "/"
-        type: "*.NuGet.csproj"
+        type: ".NuGet.csproj"
 
     - name: Output results
       shell: bash
