@@ -21,7 +21,7 @@ inputs:
     default: "Dockerfile"
   nuget_api_source:
     description: "NuGet server uri hosting the packages"
-    required: false
+    required: true
     default: "https://api.nuget.org"
   nuget_api_key:
     description: "API key to authenticate with NuGet server"
@@ -66,7 +66,7 @@ runs:
     - name: Print nuget API
       shell: bash
       run: |
-        echo "Pushing nugets to ${{ github.event.inputs.nuget_api_source }}  (${{ github.event.inputs.nuget_api_key }})"
+        echo "Pushing nugets V${{ steps.gitversion.outputs.semVer }} to ${{ github.event.inputs.nuget_api_source }}  (${{ github.event.inputs.nuget_api_key }})"
 
     - name: publish on version change
       if: success() && ${{ github.event.inputs.nuget_api_key }} != ''
