@@ -1,0 +1,92 @@
+# Static information for this action template
+# Source: https://github.com/GitTools/actions
+name: ".NET Test"
+description: "Build and test a dotnet project"
+
+# Inputs (parameters) for this action
+inputs:
+  nuget_projects:
+    description: Names of all projects to publish as NuGet, delimited by ;
+    required: false
+    default: ''
+  nuget_version:
+    description: Version number for NuGet package
+    required: true
+    default: ''
+  nuget_api_source:
+    description: NuGet server uri hosting the packages
+    required: false
+    default: "https://api.nuget.org"
+  nuget_api_key:
+    description: API key to authenticate with NuGet server
+    required: true
+    default: ''
+    
+# Steps to run
+runs:
+  using: "composite"  
+  steps:
+
+    # If no NuGet project is given, we look for projects ending with '.NuGet.csproj'
+    - name: Get NuGet projects
+      if: ${{ inputs.nuget_projects == ''}}
+      id: get_nuget_projects
+      uses: Rishabh510/Path-lister-action@master
+      with:
+        path: "/"
+        type: ".NuGet.csproj"
+
+    - name: Print detected NuGet projects
+      if: ${{ inputs.nuget_projects == ''}}
+      shell: bash
+      run: |
+        echo "Found ${{ steps.get_nuget_projects.outputs.path_count }} file(s) with this extension:"
+        for i in ${{ steps.get_nuget_projects.outputs.paths }}; do
+        echo $i
+        done
+
+    - name: Print nuget API
+      if: ${{ success() && inputs.nuget_projects == '' }}
+      shell: bash
+      run: |
+        echo "Pushing nugets V${{ inputs.nuget_version }} to ${{ inputs.nuget_api_source }}  (${{ inputs.nuget_api_key }})"
+      #TODO: REMOVE API KEY FROM LOGGING
+
+    # Build all projects ending with '.NuGet.csproj'
+    - name: Create NuGets
+      if: ${{ success() && inputs.nuget_projects == ''}}
+      shell: bash
+      run: |
+        for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
+          dotnet pack $project -o .\publish -c Release /p:Version=${{ inputs.nuget_version }}
+        done
+
+    # Build all projects passed in input.
+    - name: Create NuGets
+      if: ${{ success() && inputs.nuget_projects != ''}}
+      shell: bash
+      run: |
+        IFS=';' read -r -a project_array <<< "${{ inputs.nuget_projects }}"
+        for project in project_array; do
+          dotnet pack $project -o .\publish -c Release /p:Version=${{ inputs.nuget_version }}
+        done
+
+    - name: Publish NuGets
+      if: success()
+      shell: bash
+      run: nuget push **\*.nupkg -Source '${{ inputs.nuget_api_source }}' -ApiKey ${{ inputs.nuget_api_key }}
+
+
+    #- name: publish on version change
+    #  if: ${{ success() && inputs.nuget_api_key != ''}}
+    #  id: publish_nuget
+    #  uses: rohith/publish-nuget@v2
+    #  with:
+    #    # Filepath of the project to be packaged, relative to root of repository
+    #    PROJECT_FILE_PATH: ${{ steps.get_nuget_projects.outputs.paths }}
+    #    # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
+    #    VERSION_STATIC: ${{ steps.get_version.outputs.version }}
+    #    # API key to authenticate with NuGet server
+    #    NUGET_KEY: ${{ github.event.inputs.nuget_api_key }}
+    #    # NuGet server uri hosting the packages, defaults to https://api.nuget.org
+    #    NUGET_SOURCE: ${{ github.event.inputs.nuget_api_source }}

@@ -5,10 +5,10 @@ description: "Build and test a dotnet project"
 
 # Inputs (parameters) for this action
 inputs:
-  dotnet-version:
-    description: The dotnet version of the project to build and test.
+  docker_image_name:
+    description: The name of the docker image to create and push.
     required: false
-    default: 6.0.x
+    default: ''
   docker_registry_username:
     description: "Username for docker image registry"
     required: false
@@ -21,7 +21,7 @@ inputs:
     default: "Dockerfile"
   nuget_api_source:
     description: "NuGet server uri hosting the packages"
-    required: true
+    required: false
     default: "https://api.nuget.org"
   nuget_api_key:
     description: "API key to authenticate with NuGet server"
@@ -37,7 +37,7 @@ runs:
     - uses: actions/checkout@v3
 
     ### Build and test all projects
-    - name: .NET Test
+    - name: Run unittests
       uses: gvdmeijde/githubactions/dotnet-build-test@main
       with:
         test-output: "test-results.trx"
@@ -48,49 +48,21 @@ runs:
       uses: gvdmeijde/githubactions/gitversion@main
 
     ### Publish nugets    
-    - name: Get NuGet projects
-      id: get_nuget_projects
-      uses: Rishabh510/Path-lister-action@master
+    - name: Build and publish NuGet projects
+      if: ${{ inputs.nuget_api_key != '' }}
+      uses: gvdmeijde/githubactions/publish-nuget@main
       with:
-        path: "/"
-        type: ".NuGet.csproj"
-
-    - name: Print detected NuGet projects
-      shell: bash
-      run: |
-        echo "Found ${{ steps.get_nuget_projects.outputs.path_count }} file(s) with this extension:"
-        for i in ${{ steps.get_nuget_projects.outputs.paths }}; do
-        echo $i
-        done
-
-    - name: Print nuget API
-      if: ${{ success() && inputs.nuget_api_key != ''}}
-      shell: bash
-      run: |
-        echo "Pushing nugets V${{ steps.get_version.outputs.version }} to ${{ inputs.nuget_api_source }}  (${{ inputs.nuget_api_key }})"
-
-    - name: publish on version change
-      if: ${{ success() && inputs.nuget_api_key != ''}}
-      id: publish_nuget
-      uses: rohith/publish-nuget@v2
-      with:
-        # Filepath of the project to be packaged, relative to root of repository
-        PROJECT_FILE_PATH: ${{ steps.get_nuget_projects.outputs.paths }}
-        # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-        VERSION_STATIC: ${{ steps.get_version.outputs.version }}
-        # API key to authenticate with NuGet server
-        NUGET_KEY: ${{ github.event.inputs.nuget_api_key }}
-        # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-        NUGET_SOURCE: ${{ github.event.inputs.nuget_api_source }}
-          
+        nuget_version: ${{ steps.get_version.outputs.version }}
+        nuget_api_source: ${{ github.event.inputs.nuget_api_source }}
+        nuget_api_key: ${{ github.event.inputs.nuget_api_key }}
 
     ### Build and publish SimpleWebServer image to dockerhub
-    - name: docker build
-      if: success() && "${{ github.event.inputs.docker_registry_username != '' }}" && "${{ github.event.inputs.docker_registry_password != '' }}"
+    - name: Build and publish docker image
+      if: ${{ success() && github.event.inputs.docker_registry_username != '' && github.event.inputs.docker_registry_password != '' }}
       uses: gvdmeijde/githubactions/publish-docker@main
       with:
         registry_username: "${{ inputs.docker_registry_username }}"
         registry_password: "${{ inputs.docker_registry_password }}"
-        image_name: "simplefileserver"
+        image_name: "${{ inputs.docker_image_name }}"
         tags: "${{ steps.get_version.outputs.version }}"
         docker_file: "${{ inputs.docker_file }}"
