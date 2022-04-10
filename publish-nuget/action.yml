@@ -59,7 +59,7 @@ runs:
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing $project with version: ${{ inputs.nuget_version }}
-          dotnet build $project -p:Version=${{ inputs.nuget_version }}
+          dotnet build $project --configuration Release -p:Version=${{ inputs.nuget_version }}
         done
 
     # Build all projects passed in input.
