@@ -42,7 +42,7 @@ runs:
       run: |
         echo "Found ${{ steps.get_nuget_projects.outputs.path_count }} nuget project(s):"
         for i in ${{ steps.get_nuget_projects.outputs.paths }}; do
-          echo $i
+          echo ${i##"/github/workspace/"}
         done
 
     - name: Print nuget API
