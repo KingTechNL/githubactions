@@ -60,6 +60,12 @@ runs:
     run: echo "VERSION=${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_ENV
     #Retrieve by using:  'echo $VERSION'  or  'echo ${{ env.VERSION }}'
 
+  - name: Set output
+    id: search-files
+    shell: bash
+    #run: echo ::set-output name=files::"$SOME_OUTPUT"
+    run: echo "::set-output name=version::$(steps.gitversion.outputs.semVer)"
+
   - name: Display GitVersion outputs
     shell: bash
     run: |
