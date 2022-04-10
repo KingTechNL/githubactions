@@ -33,6 +33,7 @@ inputs:
 outputs:
   version:
     description: The resulting version number.
+    value: ${{ steps.gitversion.outputs.semVer }}
 
 runs:
   using: "composite"
