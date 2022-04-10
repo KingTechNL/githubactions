@@ -64,6 +64,7 @@ runs:
         done
 
     - name: Print nuget API
+      if: ${{ success() && inputs.nuget_api_key != ''}}
       shell: bash
       run: |
         echo "Pushing nugets V${{ steps.get_version.outputs.version }} to ${{ inputs.nuget_api_source }}  (${{ inputs.nuget_api_key }})"

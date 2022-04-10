@@ -25,6 +25,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Summary
+      shell: bash
+      run: |
+        echo "Building docker image ${{ inputs.image_name }}:${{ inputs.tag }}"
+
     - name: docker build
       shell: bash
       run: docker build . -f ${{inputs.docker_file}} --tag ${{ inputs.registry_username }}/${{inputs.image_name}}:${{inputs.tag}}
