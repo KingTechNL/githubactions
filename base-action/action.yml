@@ -92,5 +92,5 @@ runs:
         registry_username: "${{ inputs.docker_registry_username }}"
         registry_password: "${{ inputs.docker_registry_password }}"
         image_name: "simplefileserver"
-        tag: "{{ steps.gitversion.outputs.semVer }}"
+        tag: "{{ steps.get_version.outputs.version }}"
         docker_file: "${{ inputs.docker_file }}"
