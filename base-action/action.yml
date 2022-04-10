@@ -63,6 +63,11 @@ runs:
         echo $i
         done
 
+    - name: Print nuget API
+      shell: bash
+      run: |
+        echo "Pushing nugets to ${{ github.event.inputs.nuget_api_source }}  (${{ github.event.inputs.nuget_api_key }})"
+
     - name: publish on version change
       if: success() && ${{ github.event.inputs.nuget_api_key }} != ''
       id: publish_nuget
