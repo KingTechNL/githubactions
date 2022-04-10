@@ -59,7 +59,7 @@ runs:
     run: echo "VERSION=${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_ENV
     #Retrieve by using:  'echo $VERSION'  or  'echo ${{ env.VERSION }}'
 
-  - id: Set output
+  - name: Set output
     shell: bash
     run: |
       echo "::set-output name=version::${{ steps.gitversion.outputs.semVer }}"
