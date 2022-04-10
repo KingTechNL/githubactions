@@ -69,7 +69,7 @@ runs:
         echo "Pushing nugets V${{ steps.get_version.outputs.version }} to ${{ inputs.nuget_api_source }}  (${{ inputs.nuget_api_key }})"
 
     - name: publish on version change
-      if: success() && ${{ inputs.nuget_api_key != ''}}
+      if: ${{ success() && inputs.nuget_api_key != ''}}
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:

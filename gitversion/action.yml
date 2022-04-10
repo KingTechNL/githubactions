@@ -33,6 +33,7 @@ inputs:
 outputs:
   version:
     description: The resulting version number.
+    value: ${{ steps.set-output.outputs.version }}
 
 runs:
   using: "composite"
@@ -60,6 +61,7 @@ runs:
     #Retrieve by using:  'echo $VERSION'  or  'echo ${{ env.VERSION }}'
 
   - name: Set output
+    id: set-output
     shell: bash
     run: |
       echo "::set-output name=version::${{ steps.gitversion.outputs.semVer }}"
