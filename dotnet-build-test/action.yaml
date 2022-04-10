@@ -5,14 +5,18 @@ description: "Build and test a dotnet project"
 
 # Inputs (parameters) for this action
 inputs:
-  dotnet-version:
+  dotnet_version:
     description: The dotnet version of the project to build and test.
     required: false
     default: 6.0.x
-  test-output:
+  test_output:
     description: Output file for test results, used for report generation.
     required: false
     default: "test-results.trx"
+  build_version:
+    description: Version to append to build action
+    required: false
+    default: ''
 
 # Steps to run
 runs:
@@ -21,7 +25,7 @@ runs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: ${{inputs.dotnet-version}}
+        dotnet-version: ${{inputs.dotnet_version}}
 
     # Build projects
     - name: Restore dependencies
@@ -29,19 +33,25 @@ runs:
       run: dotnet restore
 
     - name: Build
+      if: ${{ inputs.build_version == '' }}
       shell: bash
       run: dotnet build --no-restore
+  
+    - name: Build
+      if: ${{ inputs.build_version != '' }}
+      shell: bash
+      run: dotnet build --no-restore -p:Version=${{ inputs.build_version }}
 
     # Run all unittests
     - name: Test
       shell: bash
-      run: dotnet test --no-build --logger "trx;LogFileName=${{inputs.test-output}}" || true
+      run: dotnet test --no-build --logger "trx;LogFileName=${{inputs.test_output}}" || true
 
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: always()
       with:
         name: DotNET Tests
-        path: "**/${{inputs.test-output}}"                            
+        path: "**/${{inputs.test_output}}"                            
         reporter: dotnet-trx
         fail-on-error: true

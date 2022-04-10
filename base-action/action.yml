@@ -40,7 +40,7 @@ runs:
     - name: Run unittests
       uses: gvdmeijde/githubactions/dotnet-build-test@main
       with:
-        test-output: "test-results.trx"
+        test_output: "test-results.trx"
 
     ### Get version number
     - name: Get version
