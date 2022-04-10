@@ -70,10 +70,7 @@ runs:
       shell: bash
       #    dotnet pack $project -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
       run: |
-        for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
-          echo packing $project with version: ${{ inputs.nuget_version }}
-          dotnet pack $project --no-build
-        done
+        dotnet pack KingTech.Web.FormGenerator.Abstract.NuGet.csproj --no-build
 
     # pack all projects passed in input.
     - name: Create NuGets
