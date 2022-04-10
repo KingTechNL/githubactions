@@ -33,7 +33,6 @@ inputs:
 outputs:
   version:
     description: The resulting version number.
-    value: ${{ steps.gitversion.outputs.semVer }}
 
 runs:
   using: "composite"
@@ -64,7 +63,7 @@ runs:
     id: search-files
     shell: bash
     #run: echo ::set-output name=files::"$SOME_OUTPUT"
-    run: echo "::set-output name=version::$(steps.gitversion.outputs.semVer)"
+    run: echo "::set-output name=version::${{ steps.gitversion.outputs.semVer}}"
 
   - name: Display GitVersion outputs
     shell: bash
