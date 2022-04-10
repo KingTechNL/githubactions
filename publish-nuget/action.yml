@@ -70,13 +70,10 @@ runs:
       shell: bash
       #    dotnet pack $project -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
       run: |
-        echo "Root dir: $PWD"
-        echo Files: "$(ls)"
-        dotnet pack KingTech.Web.FormGenerator.Abstract.NuGet/KingTech.Web.FormGenerator.Abstract.NuGet.csproj --no-build -p:Version=${{ inputs.nuget_version }}
-      #  for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
-      #    echo packing $project with version: ${{ inputs.nuget_version }}
-      #    dotnet pack $project --no-build -p:Version=${{ inputs.nuget_version }}
-      #  done
+        for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
+          echo packing ${project##"/github/workspace/"} with version: ${{ inputs.nuget_version }}
+          dotnet pack ${project##"/github/workspace/"} --no-build -p:Version=${{ inputs.nuget_version }}
+        done
 
     # pack all projects passed in input.
     - name: Create NuGets
