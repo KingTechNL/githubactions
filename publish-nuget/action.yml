@@ -67,7 +67,7 @@ runs:
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing $project with version: ${{ inputs.nuget_version }}
-          dotnet build "$project" -p:Version=${{ inputs.nuget_version }}
+          dotnet build -p:Version=${{ inputs.nuget_version }}
         done
 
     # Build all projects passed in input.
@@ -78,7 +78,7 @@ runs:
       run: |
         IFS=';' read -r -a project_array <<< "${{ inputs.nuget_projects }}"
         for project in project_array; do
-          dotnet build "$project" -p:Version=${{ inputs.nuget_version }}
+          dotnet build -p:Version=${{ inputs.nuget_version }}
         done
 
     - name: Publish NuGets
