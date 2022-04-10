@@ -30,6 +30,9 @@ inputs:
     description: Additional arguments to send to GitVersion.
     required: false
     default: ''
+outputs:
+  version:
+    description: The resulting version number.
 
 runs:
   using: "composite"
@@ -55,6 +58,11 @@ runs:
     shell: bash
     run: echo "VERSION=${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_ENV
     #Retrieve by using:  'echo $VERSION'  or  'echo ${{ env.VERSION }}'
+
+  - id: Set output
+    shell: bash
+    run: |
+      echo "::set-output name=version::${{ steps.gitversion.outputs.semVer }}"
 
   - name: Display GitVersion outputs
     shell: bash

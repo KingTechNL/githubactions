@@ -66,17 +66,17 @@ runs:
     - name: Print nuget API
       shell: bash
       run: |
-        echo "Pushing nugets V${{ steps.gitversion.outputs.semVer }} to ${{ github.event.inputs.nuget_api_source }}  (${{ github.event.inputs.nuget_api_key }})"
+        echo "Pushing nugets V${{ steps.get_version.outputs.version }} to ${{ inputs.nuget_api_source }}  (${{ inputs.nuget_api_key }})"
 
     - name: publish on version change
-      if: success() && ${{ github.event.inputs.nuget_api_key }} != ''
+      if: success() && ${{ inputs.nuget_api_key != ''}}
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
         # Filepath of the project to be packaged, relative to root of repository
         PROJECT_FILE_PATH: ${{ steps.get_nuget_projects.outputs.paths }}
         # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-        VERSION_STATIC: ${{ steps.gitversion.outputs.semVer }}
+        VERSION_STATIC: ${{ steps.get_version.outputs.version }}
         # API key to authenticate with NuGet server
         NUGET_KEY: ${{ github.event.inputs.nuget_api_key }}
         # NuGet server uri hosting the packages, defaults to https://api.nuget.org
