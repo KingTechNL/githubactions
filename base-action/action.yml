@@ -53,12 +53,12 @@ runs:
       uses: gvdmeijde/githubactions/publish-nuget@main
       with:
         nuget_version: ${{ steps.get_version.outputs.version }}
-        nuget_api_source: ${{ github.event.inputs.nuget_api_source }}
-        nuget_api_key: ${{ github.event.inputs.nuget_api_key }}
+        nuget_api_source: ${{ inputs.nuget_api_source }}
+        nuget_api_key: ${{ inputs.nuget_api_key }}
 
     ### Build and publish SimpleWebServer image to dockerhub
     - name: Build and publish docker image
-      if: ${{ success() && github.event.inputs.docker_registry_username != '' && github.event.inputs.docker_registry_password != '' }}
+      if: ${{ success() && inputs.docker_registry_username != '' && inputs.docker_registry_password != '' }}
       uses: gvdmeijde/githubactions/publish-docker@main
       with:
         registry_username: "${{ inputs.docker_registry_username }}"
