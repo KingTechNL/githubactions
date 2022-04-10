@@ -70,7 +70,7 @@ runs:
       run: |
         IFS=';' read -r -a project_array <<< "${{ inputs.nuget_projects }}"
         for project in project_array; do
-          dotnet build $project -p:Version=${{ inputs.nuget_version }}
+          dotnet build $project --configuration Release -p:Version=${{ inputs.nuget_version }}
         done
 
     - name: Publish NuGets
