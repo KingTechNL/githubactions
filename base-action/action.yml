@@ -26,6 +26,7 @@ inputs:
   nuget_api_key:
     description: "API key to authenticate with NuGet server"
     required: false
+    default: ''
   
 # Steps to run
 runs:
@@ -63,7 +64,7 @@ runs:
         done
 
     - name: publish on version change
-      if: success() && {{ github.event.inputs.nuget_api_key != '' }}
+      if: success() && ${{ github.event.inputs.nuget_api_key != '' }}
       id: publish_nuget
       uses: rohith/publish-nuget@v2
       with:
