@@ -58,7 +58,8 @@ runs:
       shell: bash
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
-          dotnet pack $project -o .\publish -c Release /p:Version=${{ inputs.nuget_version }}
+          echo packing $project with version: ${{ inputs.nuget_version }}
+          dotnet pack $project -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
         done
 
     # Build all projects passed in input.
