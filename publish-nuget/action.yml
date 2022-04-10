@@ -51,7 +51,6 @@ runs:
       run: |
         echo "Pushing nugets V${{ inputs.nuget_version }} to ${{ inputs.nuget_api_source }}"
 
-    # Build all projects ending with '.NuGet.csproj'
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
@@ -59,7 +58,13 @@ runs:
           3.1.x
           5.0.x
           6.0.x
+    
+    - name: Build solution
+      if: ${{ success() && inputs.nuget_projects != ''}}
+      shell: bash
+      run: dotnet build -p:Version=${{ inputs.nuget_version }}
 
+    # pack all projects ending with '.NuGet.csproj'
     - name: Create NuGets
       if: ${{ success() && inputs.nuget_projects == ''}}
       shell: bash
@@ -67,10 +72,10 @@ runs:
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing $project with version: ${{ inputs.nuget_version }}
-          dotnet build -p:Version=${{ inputs.nuget_version }}
+          dotnet pack "$project" -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
         done
 
-    # Build all projects passed in input.
+    # pack all projects passed in input.
     - name: Create NuGets
       if: ${{ success() && inputs.nuget_projects != ''}}
       shell: bash
@@ -78,7 +83,7 @@ runs:
       run: |
         IFS=';' read -r -a project_array <<< "${{ inputs.nuget_projects }}"
         for project in project_array; do
-          dotnet build -p:Version=${{ inputs.nuget_version }}
+          dotnet pack "$project" -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
         done
 
     - name: Publish NuGets
