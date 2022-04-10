@@ -40,10 +40,11 @@ runs:
       if: ${{ inputs.nuget_projects == ''}}
       shell: bash
       run: |
-        echo "Found ${{ steps.get_nuget_projects.outputs.path_count }} file(s) with this extension:"
+        echo "Found ${{ steps.get_nuget_projects.outputs.path_count }} nuget project(s):"
         for i in ${{ steps.get_nuget_projects.outputs.paths }}; do
-        echo $i
+          echo $i
         done
+        echo "Root dir: $PWD"
 
     - name: Print nuget API
       if: ${{ success() && inputs.nuget_projects == '' }}
