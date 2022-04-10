@@ -44,7 +44,6 @@ runs:
         for i in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo $i
         done
-        echo "Root dir: $PWD"
 
     - name: Print nuget API
       if: ${{ success() && inputs.nuget_projects == '' }}
@@ -71,9 +70,11 @@ runs:
       shell: bash
       #    dotnet pack $project -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
       run: |
+        echo "Root dir: $PWD"
+        echo Files: "$(ls)"
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing $project with version: ${{ inputs.nuget_version }}
-          dotnet pack .$project --no-build -p:Version=${{ inputs.nuget_version }}
+          dotnet pack $project --no-build -p:Version=${{ inputs.nuget_version }}
         done
 
     # pack all projects passed in input.
@@ -84,7 +85,7 @@ runs:
       run: |
         IFS=';' read -r -a project_array <<< "${{ inputs.nuget_projects }}"
         for project in project_array; do
-          dotnet pack .$project -p:Version=${{ inputs.nuget_version }}
+          dotnet pack $project -p:Version=${{ inputs.nuget_version }}
         done
 
     - name: Publish NuGets
