@@ -86,6 +86,11 @@ runs:
           dotnet pack $project -p:Version=${{ inputs.nuget_version }}
         done
 
+    - uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ inputs.nuget_api_key }}
+        nuget-version: 'latest'
+
     - name: Publish NuGets
       if: success()
       shell: bash
