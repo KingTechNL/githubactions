@@ -86,17 +86,17 @@ runs:
           dotnet pack $project -p:Version=${{ inputs.nuget_version }}
         done
 
-    - uses: nuget/setup-nuget@v1
-      with:
-        nuget-api-key: ${{ inputs.nuget_api_key }}
-        nuget-version: 'latest'
+    #- uses: nuget/setup-nuget@v1
+    #  with:
+    #    nuget-api-key: ${{ inputs.nuget_api_key }}
+    #    nuget-version: 'latest'
 
     - name: Publish NuGets
       if: success()
       shell: bash
       run: |
         echo "Pushing nugets to ${{ inputs.nuget_api_source }}..."
-        nuget push **\*.nupkg -Source '${{ inputs.nuget_api_source }}' -ApiKey ${{ inputs.nuget_api_key }}
+        dotnet nuget push **\*.nupkg -Source '${{ inputs.nuget_api_source }}' -ApiKey ${{ inputs.nuget_api_key }}
 
 
     #- name: publish on version change
