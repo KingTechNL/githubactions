@@ -16,7 +16,7 @@ inputs:
   nuget_api_source:
     description: NuGet server uri hosting the packages
     required: false
-    default: "https://api.nuget.org"
+    default: "https://www.nuget.org"
   nuget_api_key:
     description: API key to authenticate with NuGet server
     required: true
@@ -46,7 +46,7 @@ runs:
         done
 
     - name: Print nuget API
-      if: ${{ success() && inputs.nuget_projects == '' }}
+      if: ${{ success() }}
       shell: bash
       run: |
         echo "Pushing nugets V${{ inputs.nuget_version }} to ${{ inputs.nuget_api_source }}"
@@ -68,7 +68,6 @@ runs:
     - name: Create NuGets
       if: ${{ success() && inputs.nuget_projects == ''}}
       shell: bash
-      #    dotnet pack $project -o /publish -c Release /p:Version=${{ inputs.nuget_version }}
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing ${project##"/github/workspace/"} with version: ${{ inputs.nuget_version }}
@@ -79,36 +78,16 @@ runs:
     - name: Create NuGets
       if: ${{ success() && inputs.nuget_projects != ''}}
       shell: bash
-      #    dotnet pack $project -o .\publish -c Release /p:Version=${{ inputs.nuget_version }}
       run: |
         IFS=';' read -r -a project_array <<< "${{ inputs.nuget_projects }}"
         for project in project_array; do
-          dotnet pack $project -p:Version=${{ inputs.nuget_version }}
+          dotnet pack $project --no-build -p:Version=${{ inputs.nuget_version }}
         done
 
-    #- uses: nuget/setup-nuget@v1
-    #  with:
-    #    nuget-api-key: ${{ inputs.nuget_api_key }}
-    #    nuget-version: 'latest'
-
+    # publish all packages
     - name: Publish NuGets
       if: success()
       shell: bash
       run: |
         echo "Pushing nugets to ${{ inputs.nuget_api_source }}..."
-        dotnet nuget push "**\*.nupkg" --source "${{ inputs.nuget_api_source }}"" --api-key "${{ inputs.nuget_api_key }}"" --skip-duplicate
-
-
-    #- name: publish on version change
-    #  if: ${{ success() && inputs.nuget_api_key != ''}}
-    #  id: publish_nuget
-    #  uses: rohith/publish-nuget@v2
-    #  with:
-    #    # Filepath of the project to be packaged, relative to root of repository
-    #    PROJECT_FILE_PATH: ${{ steps.get_nuget_projects.outputs.paths }}
-    #    # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-    #    VERSION_STATIC: ${{ steps.get_version.outputs.version }}
-    #    # API key to authenticate with NuGet server
-    #    NUGET_KEY: ${{ github.event.inputs.nuget_api_key }}
-    #    # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-    #    NUGET_SOURCE: ${{ github.event.inputs.nuget_api_source }}
+        dotnet nuget push **\*.nupkg --source "${{ inputs.nuget_api_source }}" --api-key "${{ inputs.nuget_api_key }}" --skip-duplicate
