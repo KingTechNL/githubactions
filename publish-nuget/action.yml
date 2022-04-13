@@ -96,7 +96,7 @@ runs:
       shell: bash
       run: |
         echo "Pushing nugets to ${{ inputs.nuget_api_source }}..."
-        dotnet nuget push **\*.nupkg -Source '${{ inputs.nuget_api_source }}' -ApiKey ${{ inputs.nuget_api_key }}
+        dotnet nuget push **\*.nupkg --source '${{ inputs.nuget_api_source }}' --api-key ${{ inputs.nuget_api_key }} --skip-duplicate
 
 
     #- name: publish on version change
