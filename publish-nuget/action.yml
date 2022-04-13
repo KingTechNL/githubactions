@@ -94,7 +94,9 @@ runs:
     - name: Publish NuGets
       if: success()
       shell: bash
-      run: nuget push **\*.nupkg -Source '${{ inputs.nuget_api_source }}' -ApiKey ${{ inputs.nuget_api_key }}
+      run: |
+        echo "Pushing nugets to ${{ inputs.nuget_api_source }}..."
+        nuget push **\*.nupkg -Source '${{ inputs.nuget_api_source }}' -ApiKey ${{ inputs.nuget_api_key }}
 
 
     #- name: publish on version change
