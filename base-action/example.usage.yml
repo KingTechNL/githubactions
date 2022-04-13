@@ -1,0 +1,29 @@
+name: Docker publish
+
+# Triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+#: Jobs to execute
+jobs:
+  ## Build all projects
+  build:
+    runs-on: self-hosted
+    steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0 # <-- THIS IS NEEDED FOR GITVERSION!
+
+    ### Build and publish myDockerImage image to dockerhub
+    - name: main action
+      if: success()
+      uses: gvdmeijde/githubactions/base-action@main
+      with:
+        docker_registry_username: "${{ secrets.DOCKERHUB_USERNAME }}"
+        docker_registry_password: "${{ secrets.DOCKERHUB_TOKEN }}"
+        docker_image_name: "myDockerImage"
+        nuget_api_key: "${{ secrets.NUGETORG_TOKEN }}"

@@ -16,7 +16,7 @@ jobs:
     ### Checkout repo
     - uses: actions/checkout@v3
 
-    ### Build and publish SimpleWebServer image to dockerhub
+    ### Build and publish myDockerImage image to dockerhub
     - name: docker build
       uses: gvdmeijde/githubactions/publish-docker@main
       with:

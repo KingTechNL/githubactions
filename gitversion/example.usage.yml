@@ -1,0 +1,29 @@
+name: Docker publish
+
+# Triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+#: Jobs to execute
+jobs:
+  ## Build all projects
+  build:
+    runs-on: self-hosted
+    steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0 # <-- THIS IS NEEDED FOR GITVERSION!
+
+    ### Generate version number for repo
+    - name: Get version
+      id: get_version
+      uses: gvdmeijde/githubactions/gitversion@main
+
+      ### Print version number   
+    - name: Print version
+      shell: bash
+      run: echo Generated version ${{ steps.get_version.outputs.version }}

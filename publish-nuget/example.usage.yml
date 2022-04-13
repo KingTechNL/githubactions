@@ -1,0 +1,25 @@
+name: Docker publish
+
+# Triggers
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+#: Jobs to execute
+jobs:
+  ## Build all projects
+  build:
+    runs-on: self-hosted
+    steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+
+    ### Build and publish NuGet package to nuget.org
+    - name: Build and publish NuGet projects
+      uses: gvdmeijde/githubactions/publish-nuget@main
+      with:
+        nuget_version: 1.0.0
+        nuget_api_source: "https://www.nuget.org"
+        nuget_api_key: ${{ secrets.NUGET_API_KEY }}
