@@ -22,7 +22,7 @@ inputs:
   nuget_api_source:
     description: "NuGet server uri hosting the packages"
     required: false
-    default: "https://api.nuget.org"
+    default: "https://www.nuget.org"
   nuget_api_key:
     description: "API key to authenticate with NuGet server"
     required: false
