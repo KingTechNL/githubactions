@@ -40,9 +40,11 @@ runs:
   steps:
 
   - name: Download GitVersion.yaml configuration
-    if: ${{ inputs.useConfigFile == true && inputs.configFilePath == '' }}
+    if: ${{ inputs.useConfigFile == 'true' && inputs.configFilePath == '' }}
     shell: bash
-    run: curl -LJO https://raw.githubusercontent.com/GVDmeijde/githubactions/main/gitversion/GitVersion.yml
+    run: | 
+      curl -LJO https://raw.githubusercontent.com/GVDmeijde/githubactions/main/gitversion/GitVersion.yml
+      echo Retrieved config file from repo.
 
   - name: "Set gitversion config."
     shell: bash
