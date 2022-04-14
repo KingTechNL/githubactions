@@ -15,7 +15,7 @@ inputs:
     required: false
     default: true
   configFilePath:
-    description: Optional path to config file (defaults to GitVersion.yml).
+    description: Optional path to config file (defaults to GitVersion.yml in kingtech repo).
     required: false
     default: ''
   updateAssemblyInfo:
@@ -44,6 +44,17 @@ runs:
     shell: bash
     run: curl -LJO https://raw.githubusercontent.com/GVDmeijde/githubactions/main/gitversion/GitVersion.yml
 
+  - name: "Set gitversion config."
+    shell: bash
+    run: |
+      if ${{ inputs.configFilePath == '' }}
+      then
+        echo "GITVERSION_CONFIG=GitVersion.yml" >> $GITHUB_ENV
+      else
+        echo "GITVERSION_CONFIG=${{ inputs.configFilePath }}" >> $GITHUB_ENV
+      fi
+      echo "Gitversion config file is $GITVERSION_CONFIG"
+
   - name: Install GitVersion
     uses: gittools/actions/gitversion/setup@v0.9.7
     with:
@@ -51,29 +62,16 @@ runs:
 
   - name: Determine Version
     id:   gitversion
-    if: ${{ inputs.configFilePath != '' }}
     uses: gittools/actions/gitversion/execute@v0.9.7
     with:
       targetPath: "${{inputs.targetPath}}"
       useConfigFile: "${{inputs.useConfigFile}}"
-      configFilePath: "${{ inputs.configFilePath }}"
+      configFilePath: "${{ ienv.GITVERSION_CONFIG }}"
       updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
       updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
       additionalArguments: "${{inputs.additionalArguments}}"
 
-  - name: Determine Version
-    id:   gitversion
-    if: ${{ inputs.configFilePath == '' }}
-    uses: gittools/actions/gitversion/execute@v0.9.7
-    with:
-      targetPath: "${{inputs.targetPath}}"
-      useConfigFile: "${{inputs.useConfigFile}}"
-      configFilePath: "GitVersion.yml"
-      updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
-      updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
-      additionalArguments: "${{inputs.additionalArguments}}"
-
-  - name: Set environment variable
+  - name: Set environment variable VERSION
     shell: bash
     run: echo "VERSION=${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_ENV
     #Retrieve by using:  'echo $VERSION'  or  'echo ${{ env.VERSION }}'
