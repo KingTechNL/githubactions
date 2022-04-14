@@ -28,7 +28,7 @@ In order to impact the versioning, the following _optional_ inputs can be passed
 | Input | Default | Description |
 | -- | -- | -- |
 | targetPath | "" | Optionally supply the path to the working directory. |
-| useConfigFile | false | Whether to use a custom configuration file. |
+| useConfigFile | true | Whether to use a custom configuration file. |
 | configFilePath | "GitVersion.yml" | Optional path to config file (defaults to GitVersion.yml). |
 | updateAssemblyInfo | false | Whether to update versions in the AssemblyInfo files. |
 | updateAssemblyInfoFilename | "" | Update versions in specified file. |

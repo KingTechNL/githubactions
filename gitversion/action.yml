@@ -13,7 +13,7 @@ inputs:
   useConfigFile:
     description: Whether to use a custom configuration file.
     required: false
-    default: false
+    default: true
   configFilePath:
     description: Optional path to config file (defaults to GitVersion.yml).
     required: false
