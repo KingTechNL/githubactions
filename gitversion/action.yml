@@ -17,7 +17,7 @@ inputs:
   configFilePath:
     description: Optional path to config file (defaults to GitVersion.yml).
     required: false
-    default: gvdmeijde/githubactions/gitversion/GitVersion.yml@main
+    default: ''
   updateAssemblyInfo:
     description: Whether to update versions in the AssemblyInfo files.
     required: false
@@ -38,11 +38,16 @@ outputs:
 runs:
   using: "composite"
   steps:
+
+  - name: Download GitVersion.yaml configuration
+    if: ${{ inputs.useConfigFile == true && inputs.configFilePath == '' }}
+    shell: bash
+    run: curl -LJO https://raw.githubusercontent.com/GVDmeijde/githubactions/main/gitversion/GitVersion.yml
+
   - name: Install GitVersion
     uses: gittools/actions/gitversion/setup@v0.9.7
     with:
       versionSpec: '5.9.0'
-
 
   - name: Determine Version
     id:   gitversion
@@ -50,7 +55,7 @@ runs:
     with:
       targetPath: "${{inputs.targetPath}}"
       useConfigFile: "${{inputs.useConfigFile}}"
-      configFilePath: "${{inputs.configFilePath}}"
+      configFilePath: "${{ if(inputs.configFilePath != '') inputs.configFilePath else GitVersion.yml}}"
       updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
       updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
       additionalArguments: "${{inputs.additionalArguments}}"
