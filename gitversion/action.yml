@@ -66,7 +66,7 @@ runs:
     with:
       targetPath: "${{inputs.targetPath}}"
       useConfigFile: "${{inputs.useConfigFile}}"
-      configFilePath: "${{ ienv.GITVERSION_CONFIG }}"
+      configFilePath: "${{ env.GITVERSION_CONFIG }}"
       updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
       updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
       additionalArguments: "${{inputs.additionalArguments}}"
