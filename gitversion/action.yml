@@ -17,7 +17,7 @@ inputs:
   configFilePath:
     description: Optional path to config file (defaults to GitVersion.yml).
     required: false
-    default: 'GitVersion.yml'
+    default: gvdmeijde/githubactions/gitversion/GitVersion.yml@main
   updateAssemblyInfo:
     description: Whether to update versions in the AssemblyInfo files.
     required: false
