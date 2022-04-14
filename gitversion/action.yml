@@ -51,11 +51,24 @@ runs:
 
   - name: Determine Version
     id:   gitversion
+    if: ${{ inputs.configFilePath != '' }}
     uses: gittools/actions/gitversion/execute@v0.9.7
     with:
       targetPath: "${{inputs.targetPath}}"
       useConfigFile: "${{inputs.useConfigFile}}"
-      configFilePath: "${{ if(inputs.configFilePath != '') inputs.configFilePath else GitVersion.yml}}"
+      configFilePath: "${{ inputs.configFilePath }}"
+      updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
+      updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
+      additionalArguments: "${{inputs.additionalArguments}}"
+
+  - name: Determine Version
+    id:   gitversion
+    if: ${{ inputs.configFilePath == '' }}
+    uses: gittools/actions/gitversion/execute@v0.9.7
+    with:
+      targetPath: "${{inputs.targetPath}}"
+      useConfigFile: "${{inputs.useConfigFile}}"
+      configFilePath: "GitVersion.yml"
       updateAssemblyInfo: "${{inputs.updateAssemblyInfo}}"
       updateAssemblyInfoFilename: "${{inputs.updateAssemblyInfoFilename}}"
       additionalArguments: "${{inputs.additionalArguments}}"
