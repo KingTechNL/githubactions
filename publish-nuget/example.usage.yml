@@ -18,7 +18,7 @@ jobs:
 
     ### Build and publish NuGet package to nuget.org
     - name: Build and publish NuGet projects
-      uses: gvdmeijde/githubactions/publish-nuget@main
+      uses: kingtechnl/githubactions/publish-nuget@main
       with:
         nuget_version: 1.0.0
         nuget_api_source: "https://www.nuget.org"

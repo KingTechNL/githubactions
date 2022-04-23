@@ -43,7 +43,7 @@ runs:
     if: ${{ inputs.useConfigFile == 'true' && inputs.configFilePath == '' }}
     shell: bash
     run: | 
-      curl -LJO https://raw.githubusercontent.com/GVDmeijde/githubactions/main/gitversion/GitVersion.yml
+      curl -LJO https://raw.githubusercontent.com/KingTechNL/githubactions/main/gitversion/GitVersion.yml
       echo Retrieved config file from repo.
 
   - name: "Set gitversion config."

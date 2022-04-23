@@ -21,7 +21,7 @@ jobs:
     ### Generate version number for repo
     - name: Get version
       id: get_version
-      uses: gvdmeijde/githubactions/gitversion@main
+      uses: kingtechnl/githubactions/gitversion@main
 
       ### Print version number   
     - name: Print version

@@ -38,19 +38,19 @@ runs:
 
     ### Build and test all projects
     - name: Run unittests
-      uses: gvdmeijde/githubactions/dotnet-build-test@main
+      uses: kingtechnl/githubactions/dotnet-build-test@main
       with:
         test_output: "test-results.trx"
 
     ### Get version number
     - name: Get version
       id: get_version
-      uses: gvdmeijde/githubactions/gitversion@main
+      uses: kingtechnl/githubactions/gitversion@main
 
     ### Publish nugets    
     - name: Build and publish NuGet projects
       if: ${{ inputs.nuget_api_key != '' }}
-      uses: gvdmeijde/githubactions/publish-nuget@main
+      uses: kingtechnl/githubactions/publish-nuget@main
       with:
         nuget_version: ${{ steps.get_version.outputs.version }}
         nuget_api_source: ${{ inputs.nuget_api_source }}
@@ -59,7 +59,7 @@ runs:
     ### Build and publish SimpleWebServer image to dockerhub
     - name: Build and publish docker image
       if: ${{ success() && inputs.docker_registry_username != '' && inputs.docker_registry_password != '' }}
-      uses: gvdmeijde/githubactions/publish-docker@main
+      uses: kingtechnl/githubactions/publish-docker@main
       with:
         registry_username: "${{ inputs.docker_registry_username }}"
         registry_password: "${{ inputs.docker_registry_password }}"

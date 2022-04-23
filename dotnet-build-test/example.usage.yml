@@ -23,6 +23,6 @@ jobs:
 
     ### Build and test all projects
     - name: .NET Test
-      uses: gvdmeijde/githubactions/dotnet-build-test@main
+      uses: kingtechnl/githubactions/dotnet-build-test@main
       with:
         test-output: ${{env.TEST_OUTPUT}}

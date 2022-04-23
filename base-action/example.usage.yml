@@ -21,7 +21,7 @@ jobs:
     ### Build and publish myDockerImage image to dockerhub
     - name: main action
       if: success()
-      uses: gvdmeijde/githubactions/base-action@main
+      uses: kingtechnl/githubactions/base-action@main
       with:
         docker_registry_username: "${{ secrets.DOCKERHUB_USERNAME }}"
         docker_registry_password: "${{ secrets.DOCKERHUB_TOKEN }}"
