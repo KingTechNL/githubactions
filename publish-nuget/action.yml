@@ -71,7 +71,7 @@ runs:
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing ${project##"/github/workspace/"} with version: ${{ inputs.nuget_version }}
-          dotnet pack ${project##"/github/workspace/"} --no-build -p:Version=${{ inputs.nuget_version }}
+          dotnet pack ${project##"/github/workspace/"} --configuration Release --no-build -p:Version=${{ inputs.nuget_version }}
         done
 
     # pack all projects passed in input.
