@@ -62,7 +62,7 @@ runs:
     - name: Build solution
       if: ${{ success() && inputs.nuget_projects != ''}}
       shell: bash
-      run: dotnet build -p:Version=${{ inputs.nuget_version }}
+      run: dotnet build --configuration Release -p:Version=${{ inputs.nuget_version }}
 
     # pack all projects ending with '.NuGet.csproj'
     - name: Create NuGets
