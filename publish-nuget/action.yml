@@ -52,7 +52,7 @@ runs:
         echo "Pushing nugets V${{ inputs.nuget_version }} to ${{ inputs.nuget_api_source }}"
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: | 
           3.1.x

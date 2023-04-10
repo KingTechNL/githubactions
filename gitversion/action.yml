@@ -81,8 +81,8 @@ runs:
   - name: Set output
     id: search-files
     shell: bash
-    #run: echo ::set-output name=files::"$SOME_OUTPUT"
-    run: echo "::set-output name=version::${{ steps.gitversion.outputs.semVer}}"
+    #run: echo "::set-output name=version::${{ steps.gitversion.outputs.semVer}}"
+    run: echo "echo "version=${{ steps.gitversion.outputs.semVer}}" >> $GITHUB_OUTPUT"
 
   - name: Display GitVersion outputs
     shell: bash
