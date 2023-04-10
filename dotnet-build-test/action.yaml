@@ -35,12 +35,12 @@ runs:
     - name: Build
       if: ${{ inputs.build_version == '' }}
       shell: bash
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore
   
     - name: Build
       if: ${{ inputs.build_version != '' }}
       shell: bash
-      run: dotnet build --no-restore -p:Version=${{ inputs.build_version }}
+      run: dotnet build --configuration Release --no-restore -p:Version=${{ inputs.build_version }}
 
     # Run all unittests
     - name: Test

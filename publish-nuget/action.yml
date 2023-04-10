@@ -62,7 +62,7 @@ runs:
     - name: Build solution
       if: ${{ success() && inputs.nuget_projects != ''}}
       shell: bash
-      run: dotnet build -p:Version=${{ inputs.nuget_version }}
+      run: dotnet build --configuration Release -p:Version=${{ inputs.nuget_version }}
 
     # pack all projects ending with '.NuGet.csproj'
     - name: Create NuGets
@@ -71,7 +71,7 @@ runs:
       run: |
         for project in ${{ steps.get_nuget_projects.outputs.paths }}; do
           echo packing ${project##"/github/workspace/"} with version: ${{ inputs.nuget_version }}
-          dotnet pack ${project##"/github/workspace/"} --no-build -p:Version=${{ inputs.nuget_version }}
+          dotnet pack ${project##"/github/workspace/"} --configuration Release --no-build -p:Version=${{ inputs.nuget_version }}
         done
 
     # pack all projects passed in input.

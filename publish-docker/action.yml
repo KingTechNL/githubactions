@@ -30,6 +30,11 @@ runs:
       shell: bash
       run: |
         echo "Building docker image ${{ inputs.image_name }}:${{ inputs.tags }}"
+        
+    # Print folder structure
+    - name: list directory
+      shell: bash
+      run: find . | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"
 
     # Build the docker image
     - name: docker build
