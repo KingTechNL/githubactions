@@ -34,6 +34,12 @@ outputs:
   version:
     description: The resulting version number.
     value: ${{ steps.gitversion.outputs.semVer }}
+  branch:
+    description: The branch this action is running for.
+    value: ${{ steps.extract-branch.outputs.branch }}
+  branchTag:
+    description: Tag based on the branch this action is running for.
+    value: ${{ steps.branch-tag.outputs.branchTag }}
 
 runs:
   using: "composite"
