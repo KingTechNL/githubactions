@@ -29,7 +29,7 @@ runs:
     - name: Summary
       shell: bash
       run: |
-        echo "Building docker image ${{ inputs.image_name }}:${{ inputs.tags }}"
+        echo "Building docker image ${{ inputs.image_name }}  with tags ${{ inputs.tags }}"
         
     # Print folder structure
     - name: list directory
@@ -49,7 +49,7 @@ runs:
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
         for t in "${tag_array[@]}"; do
           echo tagging image with $t
-          echo "docker image tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
+          docker image tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t
         done
     - name: List images
       shell: bash
