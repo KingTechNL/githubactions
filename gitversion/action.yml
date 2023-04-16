@@ -98,15 +98,19 @@ runs:
     run: |
       if [[ "$BRANCH" == *"main"* ]]; then
         echo "Setting branch tag to: 'main'"
+        echo "BRANCHTAG=main" >> $GITHUB_ENV
         echo "branchTag=main" >> $GITHUB_OUTPUT
       elif [[ "$BRANCH" == *"release"* ]]; then
         echo "Setting branch tag to: 'beta'"
+        echo "BRANCHTAG=beta" >> $GITHUB_ENV
         echo "branchTag=beta" >> $GITHUB_OUTPUT
       elif [[ "$BRANCH" == *"development"* ]]; then
         echo "Setting branch tag to: 'alpha'"
+        echo "BRANCHTAG=alpha" >> $GITHUB_ENV
         echo "branchTag=alpha" >> $GITHUB_OUTPUT
       else
         echo "Setting branch tag to: 'dev'"
+        echo "BRANCHTAG=dev" >> $GITHUB_ENV
         echo "branchTag=dev" >> $GITHUB_OUTPUT
       fi
 

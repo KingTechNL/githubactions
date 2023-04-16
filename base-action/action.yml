@@ -69,7 +69,7 @@ runs:
         nuget_api_source: ${{ inputs.nuget_api_source }}
         nuget_api_key: ${{ inputs.nuget_api_key }}
 
-    ### Build and publish SimpleWebServer image to dockerhub
+    ### Build and publish docker image to dockerhub
     - name: Build and publish docker image
       if: ${{ success() && inputs.docker_registry_username != '' && inputs.docker_registry_password != '' }}
       uses: kingtechnl/githubactions/publish-docker@main
@@ -77,5 +77,5 @@ runs:
         registry_username: "${{ inputs.docker_registry_username }}"
         registry_password: "${{ inputs.docker_registry_password }}"
         image_name: "${{ inputs.docker_image_name }}"
-        tags: "${{ steps.get_version.outputs.version }}"
+        tags: "${{ steps.get_version.outputs.version }};${{ steps.get_version.outputs.branchTag }};latest"
         docker_file: "${{ inputs.docker_file }}"
