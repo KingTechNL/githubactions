@@ -25,7 +25,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    #Print a summary
+    # Print a summary
     - name: Summary
       shell: bash
       run: |
@@ -50,11 +50,10 @@ runs:
           echo tagging image with $t
           echo "docker tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
         done
-
-    # List all images
     - name: List images
       shell: bash
-      run: docker images ${{ inputs.registry_username }}
+      run: docker image ls
+
 
     #Login to docker registery and push image
     - name: Login to Docker registery
