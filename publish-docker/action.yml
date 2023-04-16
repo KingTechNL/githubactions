@@ -39,7 +39,7 @@ runs:
     # Build the docker image
     - name: docker build
       shell: bash
-      run: docker build . -f ${{inputs.docker_file}} --tag ${{ inputs.registry_username }}/${{inputs.image_name}}:latest
+      run: docker build . -f ${{inputs.docker_file}} --tag ${{inputs.image_name}}
 
     # Apply all tags to docker image
     - name: tag image
@@ -48,8 +48,13 @@ runs:
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
         for t in "${tag_array[@]}"; do
           echo tagging image with $t
-          echo "docker tag ${{ inputs.registry_username }}/${{ inputs.image_name }}:latest ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
+          echo "docker tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
         done
+
+    # List all images
+    - name: List images
+      shell: bash
+      run: docker images ${{ inputs.registry_username }}
 
     #Login to docker registery and push image
     - name: Login to Docker registery
