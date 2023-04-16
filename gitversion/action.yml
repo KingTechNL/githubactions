@@ -87,24 +87,27 @@ runs:
   - name: Extract branch name
     shell: bash
     id: extract-branch
-    run: echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >>$GITHUB_OUTPUT
+    run: |
+      echo "Current branch is $(echo ${GITHUB_REF#refs/heads/})"
+      echo "BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+      echo "branch=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_OUTPUT
 
   - name: Set version tag based on branch  
     shell: bash
     id: branch-tag
     run: |
-      if [[ "$branch" == *"main"* ]]; then
+      if [[ "$BRANCH" == *"main"* ]]; then
         echo "Setting branch tag to: 'main'"
-        echo "branchTag=main" >>$GITHUB_OUTPUT
-      elif [[ "$branch" == *"release"* ]]; then
+        echo "branchTag=main" >> $GITHUB_OUTPUT
+      elif [[ "$BRANCH" == *"release"* ]]; then
         echo "Setting branch tag to: 'beta'"
-        echo "branchTag=beta" >>$GITHUB_OUTPUT
-      elif [[ "$branch" == *"development"* ]]; then
+        echo "branchTag=beta" >> $GITHUB_OUTPUT
+      elif [[ "$BRANCH" == *"development"* ]]; then
         echo "Setting branch tag to: 'alpha'"
-        echo "branchTag=alpha" >>$GITHUB_OUTPUT
+        echo "branchTag=alpha" >> $GITHUB_OUTPUT
       else
         echo "Setting branch tag to: 'dev'"
-        echo "branchTag=dev" >>$GITHUB_OUTPUT
+        echo "branchTag=dev" >> $GITHUB_OUTPUT
       fi
 
   - name: Display GitVersion outputs
