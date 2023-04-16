@@ -47,8 +47,8 @@ runs:
       run: |
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
         for t in tag_array; do
-          echo "echo tagging image with $t"
-          echo "docker image tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
+          echo "echo tagging image with ${{t}}"
+          echo "docker image tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:${{t}}"
         done
 
     #Login to docker registery and push image
