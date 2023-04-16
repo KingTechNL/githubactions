@@ -46,7 +46,7 @@ runs:
       shell: bash
       run: |
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
-        for t in tag_array; do
+        for t in "${tag_array[@]}"; do
           echo tagging image with $t
           echo "docker tag ${{ inputs.registry_username }}/${{ inputs.image_name }}:latest ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
         done
