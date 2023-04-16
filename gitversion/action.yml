@@ -84,6 +84,27 @@ runs:
     #run: echo "::set-output name=version::${{ steps.gitversion.outputs.semVer}}"
     run: echo "echo "version=${{ steps.gitversion.outputs.semVer}}" >> $GITHUB_OUTPUT"
 
+  - name: Set version tag based on branch  
+    shell: bash
+    id: branch-tag
+    run: |
+      $branchTag = 'dev'
+      if($env:ISMAIN -eq $true)
+      {
+        $branchTag = 'main'
+      }
+      elseif($env:ISRELEASE -eq $true)
+      {
+        $branchTag = 'beta'
+      }
+      elseif($env:ISDEVELOPMENT -eq $true)
+      {
+        $branchTag = 'alpha'
+      }
+      echo "Setting docker branch tag to: '${{ branchTag }}'"
+      echo "BRANCHTAG=${{ branchTag }}" >> $GITHUB_ENV
+      echo "BranchTag=${{ branchTag }}" >> $GITHUB_OUTPUT
+
   - name: Display GitVersion outputs
     shell: bash
     run: |
