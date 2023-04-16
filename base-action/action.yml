@@ -47,6 +47,19 @@ runs:
       id: get_version
       uses: kingtechnl/githubactions/gitversion@main
 
+
+    ### Test conditions
+    - name: If condition is not set
+      if: ${{ inputs.docker_registry_username != '' }}
+      shell: bash
+      run: |
+        echo "docker_registery_username = ${{inputs.docker_registry_username}}"
+    - name: Else, if condition is set
+      if: ${{ inputs.docker_registry_username == '' }}
+      shell: bash
+      run: |
+        echo "no docker_registery_username set"
+
     ### Publish nugets    
     - name: Build and publish NuGet projects
       if: ${{ inputs.nuget_api_key != '' }}
