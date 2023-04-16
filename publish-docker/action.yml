@@ -52,7 +52,7 @@ runs:
         done
     - name: List images
       shell: bash
-      run: docker image ls
+      run: docker images
 
 
     #Login to docker registery and push image
@@ -65,4 +65,4 @@ runs:
     - name: docker push
       shell: bash
       if: success()
-      run: docker push --all-tags ${{ inputs.registry_username }}/${{inputs.image_name}}
+      run: docker image push --all-tags ${{ inputs.registry_username }}/${{inputs.image_name}}
