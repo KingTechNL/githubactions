@@ -44,11 +44,12 @@ runs:
     # Apply all tags to docker image
     - name: tag image
       shell: bash
+      if: success()
       run: |
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
         for t in "${tag_array[@]}"; do
           echo tagging image with $t
-          echo "docker tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
+          echo "docker image tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
         done
     - name: List images
       shell: bash
