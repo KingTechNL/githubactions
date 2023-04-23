@@ -54,7 +54,7 @@ runs:
       shell: bash
       run: |
         echo "docker_registery_username = ${{inputs.docker_registry_username}}"
-    - name: Else, if condition is set
+    - name: Else, if docker username is set
       if: ${{ inputs.docker_registry_username == '' }}
       shell: bash
       run: |
@@ -68,7 +68,11 @@ runs:
         nuget_version: ${{ steps.get_version.outputs.version }}
         nuget_api_source: ${{ inputs.nuget_api_source }}
         nuget_api_key: ${{ inputs.nuget_api_key }}
-
+    - name: Else, if no API key is set
+      if: ${{ inputs.nuget_api_key == '' }}
+      shell: bash
+      run: |
+        echo "Skipping NuGet publishing, no nuget_api_key set."
     ### Build and publish docker image to dockerhub
     - name: Build and publish docker image
       if: ${{ success() && inputs.docker_registry_username != '' && inputs.docker_registry_password != '' }}
