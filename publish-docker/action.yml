@@ -57,11 +57,12 @@ runs:
           TAGS=${TAGS:+$TAGS }-"${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
         done
         echo complete tag parameter: $TAGS
+        echo "DOCKER_TAGS=${{ TAGS }}" >> $GITHUB_ENV
 
     # Build the docker image
     - name: docker build
       shell: bash
-      run: docker buildx build --no-cache --platform linux/amd64,linux/arm64 $TAGS --push . -f ${{inputs.docker_file}}
+      run: docker buildx build --no-cache --platform linux/amd64,linux/arm64 ${{ DOCKER_TAGS }} --push . -f ${{inputs.docker_file}}
       #run: docker build --platform linux/amd64,linux/arm64 . -f ${{inputs.docker_file}} --tag ${{inputs.image_name}}
 
     # Apply all tags to docker image
