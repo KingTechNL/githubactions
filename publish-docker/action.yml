@@ -48,7 +48,8 @@ runs:
       shell: bash
       run: docker buildx create --name multiarch --driver docker-container --use
 
-    - name: create all tags
+    # Create all the tag parameters for the docker image
+    - name: create tag parameters
       shell: bash
       run: |
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
@@ -59,27 +60,7 @@ runs:
         echo complete tag parameter: $TAGS
         echo "DOCKER_TAGS=$TAGS" >> $GITHUB_ENV
 
-    # Build the docker image
+    # Build and publish the docker image
     - name: docker build
       shell: bash
       run: docker buildx build --no-cache --platform linux/amd64,linux/arm64 ${{ env.DOCKER_TAGS }} --push . -f ${{inputs.docker_file}}
-      #run: docker build --platform linux/amd64,linux/arm64 . -f ${{inputs.docker_file}} --tag ${{inputs.image_name}}
-
-    # Apply all tags to docker image
-    #- name: tag image
-    #  shell: bash
-    #  if: success()
-    #  run: |
-    #    IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
-    #    for t in "${tag_array[@]}"; do
-    #      echo tagging image with $t
-    #      docker image tag ${{ inputs.image_name }} ${{ inputs.registry_username }}/${{inputs.image_name}}:$t
-    #    done
-    #- name: List images
-    #  shell: bash
-    #  run: docker images
-
-    #- name: docker push
-    #  shell: bash
-    #  if: success()
-    #  run: docker image push --all-tags ${{ inputs.registry_username }}/${{inputs.image_name}}
