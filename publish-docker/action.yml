@@ -54,7 +54,7 @@ runs:
         IFS=';' read -r -a tag_array <<< "${{ inputs.tags }}"
         for t in "${tag_array[@]}"; do
           echo tagging image with $t
-          TAGS=${TAGS:+$TAGS }-"${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
+          TAGS=${TAGS:+$TAGS }--tags" ${{ inputs.registry_username }}/${{inputs.image_name}}:$t"
         done
         echo complete tag parameter: $TAGS
         echo "DOCKER_TAGS=$TAGS" >> $GITHUB_ENV
@@ -62,7 +62,7 @@ runs:
     # Build the docker image
     - name: docker build
       shell: bash
-      run: docker buildx build --no-cache --platform linux/amd64,linux/arm64 $DOCKER_TAGS --push . -f ${{inputs.docker_file}}
+      run: docker buildx build --no-cache --platform linux/amd64,linux/arm64 ${{ env.DOCKER_TAGS }} --push . -f ${{inputs.docker_file}}
       #run: docker build --platform linux/amd64,linux/arm64 . -f ${{inputs.docker_file}} --tag ${{inputs.image_name}}
 
     # Apply all tags to docker image
