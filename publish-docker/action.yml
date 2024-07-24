@@ -36,10 +36,14 @@ runs:
       shell: bash
       run: find . | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"
 
+    - name: create docker buildx
+      shell: bash
+      run: docker buildx create --name multiarch --driver docker-container --use
+
     # Build the docker image
     - name: docker build
       shell: bash
-      run: docker build --platform linux/amd64,linux/arm64 . -f ${{inputs.docker_file}} --tag ${{inputs.image_name}}
+      run: docker buildx build --platform linux/amd64,linux/arm64 . -f ${{inputs.docker_file}} --tag ${{inputs.image_name}}
 
     # Apply all tags to docker image
     - name: tag image
