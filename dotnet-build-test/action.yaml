@@ -8,7 +8,10 @@ inputs:
   dotnet_version:
     description: The dotnet version of the project to build and test.
     required: false
-    default: 6.0.x
+    default: |
+      9.0.x
+      8.0.x
+      6.0.x
   test_output:
     description: Output file for test results, used for report generation.
     required: false
