@@ -36,17 +36,17 @@ runs:
     ### Checkout repo
     - uses: actions/checkout@v3
 
-    ### Build and test all projects
-    - name: Run unittests
-      uses: kingtechnl/githubactions/dotnet-build-test@main
-      with:
-        test_output: "test-results.trx"
-
     ### Get version number
     - name: Get version
       id: get_version
       uses: kingtechnl/githubactions/gitversion@main
 
+    ### Build and test all projects
+    - name: Run unittests
+      uses: kingtechnl/githubactions/dotnet-build-test@main
+      with:
+        test_output: "test-results.trx"
+        build_version: "${{ steps.get_version.outputs.version }}"
 
     ### Test conditions
     - name: If condition is not set
