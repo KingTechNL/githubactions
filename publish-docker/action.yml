@@ -44,9 +44,23 @@ runs:
         password: ${{ inputs.registry_password }}
 
     # Create docker buildx environment
-    - name: create docker buildx
+    - name: list existing docker buildx environments
       shell: bash
-      run: docker buildx create --name multiarch --driver docker-container --use
+      run: docker buildx ls
+    - name: Set up Docker Buildx
+      id: setup-buildx
+      run: |
+        if docker buildx ls | grep -q 'multiarch'; then
+          echo "Builder instance exists."
+        else
+          echo "No builder instance found. Creating a new one."
+          docker buildx create --name multiarch --driver docker-container --use
+        fi
+
+    # Create docker buildx environment
+    # - name: create docker buildx
+    #   shell: bash
+    #   run: docker buildx create --name multiarch --driver docker-container --use
 
     # Create all the tag parameters for the docker image
     - name: create tag parameters
