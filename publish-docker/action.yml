@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: docker buildx ls
     - name: Set up Docker Buildx
-      id: setup-buildx
+      shell: bash
       run: |
         if docker buildx ls | grep -q 'multiarch'; then
           echo "Builder instance exists."
