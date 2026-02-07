@@ -1,0 +1,32 @@
+# Example workflow showing how to use the `deploy-pages` composite action
+# Copy this into .github/workflows/deploy-pages.yml in your repository.
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (required before using the composite action)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build site (example)
+        run: |
+          mkdir -p public
+          echo "<html><body><h1>Hello from GitHub Pages</h1></body></html>" > public/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: ./deploy-pages
+        with:
+          sourceDir: public
+          targetBranch: gh-pages
+          commitMessage: "Deploy site via example workflow"
+          userName: github-actions
+          userEmail: github-actions@users.noreply.github.com
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,75 @@
+# Static information for this action template
+# Source: https://github.com/GitTools/actions
+# Note: Make sure the checkout action is called with:  fetch-depth: 0
+# This action builds a static website from markdown using docusaurus. See: https://docusaurus.io/
+name: "Build docusaurus site"
+description: "Build a static website (e.g. blog) using Docusaurus"
+
+# Inputs (parameters) for this action
+inputs:
+  sourceDir:
+    description: The directory the markdown files are stored in.
+  targetDir:
+    description: The directory to store the generated docusaurus website in.
+  docusaurusPath:
+    description: Optionally supply the path to the output directory for docusaurus.
+    required: false
+    default: 'publish'
+  # docusaurus parameters
+  siteName:
+    description: The name of your site.
+    required: false
+    default: 'my-website'
+  version:
+    description: Optionally a docusaurus version can be specified for the markdown. 
+    required: false
+    default: 'latest'
+  variant:
+    description: The docusaurus template variant to use (javascript or typescript), default is javascript.
+    required: false
+    default: 'javascript'
+  template:
+    description: The docusaurus template to use, default is 'classic'.
+    required: false
+    default: 'classic'
+
+runs:
+  using: "composite"
+  steps:
+
+  # Install node.js
+  - uses: actions/setup-node@v6
+    with:
+
+  # Install docusaurus build
+  - name: Install docusaurus
+    shell: bash
+    run: |
+      npm install create-docusaurus@3.9.2
+      cd ${{ inputs.docusaurusPath }}
+      echo 'building docusaurus site'
+      npx create-docusaurus@${{ inputs.version}} ${{ inputs.siteName}} ${{ inputs.template}} --${{ inputs.variant}}
+
+  # Setup docusaurus build environment.
+  # npx create-docusaurus@latest my-website classic
+  - name: Setting up docusaurus
+    shell: bash
+    run: |
+      echo 'Removing build folder'
+      rm -rf ${{ inputs.siteName }}/build
+      echo 'Removing static folder'
+      rm -rf ${{ inputs.siteName }}/static
+      echo 'Removing docs folder'
+      rm -rf ${{ inputs.siteName }}/docs
+      echo 'applying source files'
+      cp ${{ inputs.sourceDir }}/* ${{ inputs.siteName }}/*
+    
+  # Build static website.
+  - name: Building docusaurus site
+    shell: bash 
+    run: npm run build
+
+  # Copy generated website to target directory.
+  - name: Storing output
+    shell: bash
+    run: cp build/* $${{ inputs.targetDir }}/
