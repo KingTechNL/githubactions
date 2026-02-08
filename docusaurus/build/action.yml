@@ -40,6 +40,7 @@ runs:
   # Install node.js
   - uses: actions/setup-node@v6
     with:
+      node-version: 'latest'
 
   # Install docusaurus build
   - name: Install docusaurus
