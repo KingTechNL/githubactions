@@ -9,8 +9,12 @@ description: "Build a static website (e.g. blog) using Docusaurus"
 inputs:
   sourceDir:
     description: The directory the markdown files are stored in.
+    required: true
+    default: ''
   targetDir:
     description: The directory to store the generated docusaurus website in.
+    required: true
+    default: ''
   docusaurusPath:
     description: Optionally supply the path to the output directory for docusaurus.
     required: false
