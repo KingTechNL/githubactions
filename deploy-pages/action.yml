@@ -10,7 +10,7 @@ inputs:
     required: false
     default: '.'
   targetBranch:
-    description: The branch to deploy the website to (default: 'gh-pages').
+    description: The branch to deploy the website to (default is 'gh-pages').
     required: false
     default: 'gh-pages'
   commitMessage:
