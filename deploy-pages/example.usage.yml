@@ -22,7 +22,7 @@ jobs:
           echo "<html><body><h1>Hello from GitHub Pages</h1></body></html>" > public/index.html
 
       - name: Deploy to GitHub Pages
-        uses: ./deploy-pages
+        uses: kingtechnl/githubactions/deploy-pages@main
         with:
           sourceDir: public
           targetBranch: gh-pages
