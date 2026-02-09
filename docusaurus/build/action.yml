@@ -42,7 +42,8 @@ runs:
   steps:
 
   # Install node.js
-  - uses: actions/setup-node@v6
+  - name: Setup node.js
+    uses: actions/setup-node@v6
     with:
       node-version: 'latest'
 
@@ -51,6 +52,7 @@ runs:
     shell: bash
     run: |
       npm install create-docusaurus@3.9.2
+      mkdir -p ${{ inputs.docusaurusPath }}
       cd ${{ inputs.docusaurusPath }}
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version}} ${{ inputs.siteName}} ${{ inputs.template}} --${{ inputs.variant}}
