@@ -52,10 +52,10 @@ runs:
     shell: bash
     run: |
       npm install create-docusaurus@3.9.2
-      mkdir -p ${{ inputs.docusaurusPath }}
-      cd ${{ inputs.docusaurusPath }}
+      mkdir -p "${{ inputs.docusaurusPath }}"
+      cd "${{ inputs.docusaurusPath }}"
       echo 'building docusaurus site'
-      npx create-docusaurus@${{ inputs.version}} "${{ inputs.siteName}}" ${{ inputs.template}} --${{ inputs.variant}}
+      npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
 
   # Setup docusaurus build environment.
   # npx create-docusaurus@latest my-website classic
@@ -63,13 +63,13 @@ runs:
     shell: bash
     run: |
       echo 'Removing build folder'
-      rm -rf ${{ inputs.siteName }}/build
+      rm -rf "${{ inputs.siteName }}/build"
       echo 'Removing static folder'
-      rm -rf ${{ inputs.siteName }}/static
+      rm -rf "${{ inputs.siteName }}/static"
       echo 'Removing docs folder'
-      rm -rf ${{ inputs.siteName }}/docs
+      rm -rf "${{ inputs.siteName }}/docs"
       echo 'applying source files'
-      cp ${{ inputs.sourceDir }}/* ${{ inputs.siteName }}/*
+      cp "${{ inputs.sourceDir }}/*" "${{ inputs.siteName }}/*"
     
   # Build static website.
   - name: Building docusaurus site
@@ -79,4 +79,4 @@ runs:
   # Copy generated website to target directory.
   - name: Storing output
     shell: bash
-    run: cp build/* $${{ inputs.targetDir }}/
+    run: cp build/* "${{ inputs.targetDir }}/"
