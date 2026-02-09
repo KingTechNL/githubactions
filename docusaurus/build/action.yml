@@ -55,7 +55,7 @@ runs:
       mkdir -p ${{ inputs.docusaurusPath }}
       cd ${{ inputs.docusaurusPath }}
       echo 'building docusaurus site'
-      npx create-docusaurus@${{ inputs.version}} ${{ inputs.siteName}} ${{ inputs.template}} --${{ inputs.variant}}
+      npx create-docusaurus@${{ inputs.version}} "${{ inputs.siteName}}" ${{ inputs.template}} --${{ inputs.variant}}
 
   # Setup docusaurus build environment.
   # npx create-docusaurus@latest my-website classic
