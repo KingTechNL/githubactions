@@ -53,6 +53,7 @@ runs:
     run: |
       npm install create-docusaurus@3.9.2
       mkdir -p "${{ inputs.docusaurusPath }}"
+      export ORIGINAL_DIR=$(pwd)     
       cd "${{ inputs.docusaurusPath }}"
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
@@ -69,12 +70,15 @@ runs:
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
       echo 'applying source files'
-      cp "${{ github.workspace }}/${{ inputs.sourceDir }}/*" "${{ inputs.siteName }}/*"
+      cd "${ORIGINAL_DIR}"
+      cp -r "${{ inputs.sourceDir }}/*" "${{ inputs.siteName }}/*"
     
   # Build static website.
   - name: Building docusaurus site
     shell: bash 
-    run: npm run build
+    run: |
+      cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
+      npm run build
 
   # Copy generated website to target directory.
   - name: Storing output
