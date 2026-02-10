@@ -10,15 +10,15 @@ inputs:
   sourceDir:
     description: The directory the markdown files are stored in.
     required: true
-    default: ''
+    default: '.'
   targetDir:
     description: The directory to store the generated docusaurus website in.
     required: true
-    default: ''
+    default: 'publish'
   docusaurusPath:
     description: Optionally supply the path to the output directory for docusaurus.
     required: false
-    default: 'publish'
+    default: '.'
   # docusaurus parameters
   siteName:
     description: The name of your site.
