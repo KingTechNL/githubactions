@@ -70,7 +70,7 @@ runs:
       rm -rf "${{ inputs.siteName }}/static"
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
-      echo 'applying source files'
+      echo 'applying source files from ${ORIGINAL_DIR}/${{ inputs.sourceDir }}'
       cd "${ORIGINAL_DIR}"
       cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
     
