@@ -84,8 +84,9 @@ runs:
   - name: Building docusaurus site
     shell: bash 
     run: |
-      echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
+      tree -d .
+      echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       npm run build
 
   # Copy generated website to target directory.
