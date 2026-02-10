@@ -18,7 +18,7 @@ inputs:
   docusaurusPath:
     description: Optionally supply the path the docusaurus project is created in.
     required: false
-    default: '${{ GITHUB_ACTION_PATH }}'
+    default: '${{ github.action_path }}/docusaurus'
   # docusaurus parameters
   siteName:
     description: The name of your site.
