@@ -71,7 +71,7 @@ runs:
       rm -rf "${{ inputs.siteName }}/static"
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
-      echo "applying source files from ${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}"
+      echo "copying source files from ${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}" to docusaurus path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       cd "${{ env.ORIGINAL_DIR }}"
       cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
     
@@ -79,6 +79,7 @@ runs:
   - name: Building docusaurus site
     shell: bash 
     run: |
+      echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       npm run build
 
