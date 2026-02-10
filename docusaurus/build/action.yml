@@ -69,7 +69,7 @@ runs:
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
       echo 'applying source files'
-      cp "${{ inputs.sourceDir }}/*" "${{ inputs.siteName }}/*"
+      cp "${{ github.workspace }}/${{ inputs.sourceDir }}/*" "${{ inputs.siteName }}/*"
     
   # Build static website.
   - name: Building docusaurus site
