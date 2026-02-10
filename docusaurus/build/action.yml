@@ -53,7 +53,8 @@ runs:
     run: |
       npm install create-docusaurus@3.9.2
       mkdir -p "${{ inputs.docusaurusPath }}"
-      export ORIGINAL_DIR=$(pwd)     
+      export ORIGINAL_DIR=$(pwd)
+      echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
       cd "${{ inputs.docusaurusPath }}"
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
