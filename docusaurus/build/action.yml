@@ -16,9 +16,9 @@ inputs:
     required: true
     default: 'publish'
   docusaurusPath:
-    description: Optionally supply the path to the output directory for docusaurus.
+    description: Optionally supply the path the docusaurus project is created in.
     required: false
-    default: 'docusaurus_build'
+    default: '${{ GITHUB_ACTION_PATH }}'
   # docusaurus parameters
   siteName:
     description: The name of your site.
@@ -85,4 +85,6 @@ runs:
   # Copy generated website to target directory.
   - name: Storing output
     shell: bash
-    run: cp build/* "${{ inputs.targetDir }}/"
+    run: |
+      cp -r build/* "${{ inputs.targetDir }}/"
+      cd "${{ env.ORIGINAL_DIR }}"
