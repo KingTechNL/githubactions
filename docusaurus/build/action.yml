@@ -18,7 +18,7 @@ inputs:
   docusaurusPath:
     description: Optionally supply the path to the output directory for docusaurus.
     required: false
-    default: '.'
+    default: 'docusaurus_build'
   # docusaurus parameters
   siteName:
     description: The name of your site.
