@@ -41,6 +41,15 @@ runs:
   using: "composite"
   steps:
 
+  # Move to docusaurus action directory
+  - name: Move to docusaurus action directory
+    shell: bash
+    run: |
+      export ORIGINAL_DIR=$(pwd)
+      echo "ORIGINAL_DIR=$ORIGINAL_DIR" >> $GITHUB_ENV
+      echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
+      cd "${{ inputs.docusaurusPath }}"
+
   # Install node.js
   - name: Setup node.js
     uses: actions/setup-node@v6
@@ -53,10 +62,6 @@ runs:
     run: |
       npm install create-docusaurus@3.9.2
       mkdir -p "${{ inputs.docusaurusPath }}"
-      export ORIGINAL_DIR=$(pwd)
-      echo "ORIGINAL_DIR=$ORIGINAL_DIR" >> $GITHUB_ENV
-      echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
-      cd "${{ inputs.docusaurusPath }}"
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
 
