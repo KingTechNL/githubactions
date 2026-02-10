@@ -53,7 +53,8 @@ runs:
     run: |
       npm install create-docusaurus@3.9.2
       mkdir -p "${{ inputs.docusaurusPath }}"
-      echo "ORIGINAL_DIR=$(pwd)" >> $GITHUB_ENV
+      export ORIGINAL_DIR=$(pwd)
+      echo "ORIGINAL_DIR=$ORIGINAL_DIR" >> $GITHUB_ENV
       echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
       cd "${{ inputs.docusaurusPath }}"
       echo 'building docusaurus site'
