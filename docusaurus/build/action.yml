@@ -71,8 +71,8 @@ runs:
       rm -rf "${{ inputs.siteName }}/static"
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
-      echo 'applying source files from $ORIGINAL_DIR/${{ inputs.sourceDir }}'
-      cd "$ORIGINAL_DIR"
+      echo "applying source files from ${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}"
+      cd "${{ env.ORIGINAL_DIR }}"
       cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
     
   # Build static website.
