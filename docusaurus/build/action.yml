@@ -53,7 +53,7 @@ runs:
     run: |
       npm install create-docusaurus@3.9.2
       mkdir -p "${{ inputs.docusaurusPath }}"
-      export ORIGINAL_DIR=$(pwd)
+      echo "ORIGINAL_DIR=$(pwd)" >> $GITHUB_ENV
       echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
       cd "${{ inputs.docusaurusPath }}"
       echo 'building docusaurus site'
@@ -70,8 +70,8 @@ runs:
       rm -rf "${{ inputs.siteName }}/static"
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
-      echo 'applying source files from ${ORIGINAL_DIR}/${{ inputs.sourceDir }}'
-      cd "${ORIGINAL_DIR}"
+      echo 'applying source files from $ORIGINAL_DIR/${{ inputs.sourceDir }}'
+      cd "$ORIGINAL_DIR"
       cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
     
   # Build static website.
