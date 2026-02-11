@@ -75,14 +75,14 @@ runs:
       rm -rf "${{ inputs.siteName }}/build"
       #echo 'Removing static folder'
       #rm -rf "${{ inputs.siteName }}/static"
-      echo 'Removing docs folder'
-      rm -rf "${{ inputs.siteName }}/docs"
-      echo 'Removing blog folder'
-      rm -rf "${{ inputs.siteName }}/blog"
+      #echo 'Removing docs folder'
+      #rm -rf "${{ inputs.siteName }}/docs"
+      #echo 'Removing blog folder'
+      #rm -rf "${{ inputs.siteName }}/blog"
       #### Copy source files to docusaurus path.
       echo 'copying source files from "${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}" to docusaurus path: "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"'
       cd "${{ env.ORIGINAL_DIR }}"
-      cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
+      #cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       ### Build docusaurus site.
       cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
