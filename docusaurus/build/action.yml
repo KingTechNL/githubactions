@@ -88,4 +88,4 @@ runs:
       echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       npm run build
       echo 'Storing out put in target directory "${{ inputs.targetDir }}"'
-      cp -r "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}/build/*" "${{ inputs.targetDir }}/"
+      cp -r "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}/build" "${{ inputs.targetDir }}/"
