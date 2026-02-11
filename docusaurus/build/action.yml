@@ -50,13 +50,14 @@ runs:
       echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
       mkdir -p "${{ inputs.docusaurusPath }}"
       cd "${{ inputs.docusaurusPath }}"
+      tree -d .
 
   # Install node.js
   - name: Setup node.js
     uses: actions/setup-node@v6
     with:
       node-version: 'latest'
-      cache: 'npm'
+      #cache: 'npm'
 
   # Install docusaurus build
   - name: Install docusaurus
@@ -65,6 +66,7 @@ runs:
       npm install create-docusaurus@3.9.2
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
+      tree -d .
 
   # Setup docusaurus build environment.
   # npx create-docusaurus@latest my-website classic
