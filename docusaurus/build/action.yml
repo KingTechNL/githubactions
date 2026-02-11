@@ -50,7 +50,6 @@ runs:
       echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
       mkdir -p "${{ inputs.docusaurusPath }}"
       cd "${{ inputs.docusaurusPath }}"
-      tree -d .
 
   # Install node.js
   - name: Setup node.js
@@ -60,20 +59,17 @@ runs:
       #cache: 'npm'
 
   # Install docusaurus build
-  - name: Install docusaurus
+  - name: Build docusaurus site
     shell: bash
     run: |
-      tree -d .
+      ### Install docusaurus.
+      cd "${{ inputs.docusaurusPath }}"
       npm install create-docusaurus@3.9.2
+      ### Setup docusaurus site (base).
+      ### npx create-docusaurus@latest my-website classic
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
-      tree -d .
-
-  # Setup docusaurus build environment.
-  # npx create-docusaurus@latest my-website classic
-  - name: Setting up docusaurus
-    shell: bash
-    run: |
+      ### Apply customizations.
       echo 'Removing build folder'
       rm -rf "${{ inputs.siteName }}/build"
       echo 'Removing static folder'
@@ -83,19 +79,8 @@ runs:
       echo 'copying source files from "${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}" to docusaurus path: "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"'
       cd "${{ env.ORIGINAL_DIR }}"
       cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
-    
-  # Install dependencies
-  - name: Install dependencies
-    shell: bash
-    run: |
+      ### Build docusaurus site.
       cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
-      npm install
-
-  # Build static website.
-  - name: Building docusaurus site
-    shell: bash 
-    run: |
-      tree -d .
       echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       npm run build
 
@@ -103,5 +88,5 @@ runs:
   - name: Storing output
     shell: bash
     run: |
-      cp -r build/* "${{ inputs.targetDir }}/"
+      cp -r "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}/build/*" "${{ inputs.targetDir }}/"
       cd "${{ env.ORIGINAL_DIR }}"
