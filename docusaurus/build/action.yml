@@ -87,10 +87,5 @@ runs:
       cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       npm run build
-
-  # Copy generated website to target directory.
-  - name: Storing output
-    shell: bash
-    run: |
+      echo 'Storing out put in target directory "${{ inputs.targetDir }}"'
       cp -r "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}/build/*" "${{ inputs.targetDir }}/"
-      cd "${{ env.ORIGINAL_DIR }}"
