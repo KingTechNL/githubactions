@@ -70,12 +70,16 @@ runs:
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
       ### Apply customizations.
+      #### Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
       echo 'Removing build folder'
       rm -rf "${{ inputs.siteName }}/build"
-      echo 'Removing static folder'
-      rm -rf "${{ inputs.siteName }}/static"
+      #echo 'Removing static folder'
+      #rm -rf "${{ inputs.siteName }}/static"
       echo 'Removing docs folder'
       rm -rf "${{ inputs.siteName }}/docs"
+      echo 'Removing blog folder'
+      rm -rf "${{ inputs.siteName }}/blog"
+      #### Copy source files to docusaurus path.
       echo 'copying source files from "${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}" to docusaurus path: "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"'
       cd "${{ env.ORIGINAL_DIR }}"
       cp -r "${{ inputs.sourceDir }}" "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
