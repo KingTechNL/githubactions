@@ -18,7 +18,7 @@ inputs:
   docusaurusPath:
     description: Optionally supply the path the docusaurus project is created in.
     required: false
-    default: '${GITHUB_ACTION_PATH}/docusaurus'
+    default: '${{ github.action_path }}/docusaurus'
   npmCache:
     description: Optionally specify the npm cache directory to speed up npm install.
     required: false
@@ -88,7 +88,7 @@ runs:
   # Build docusaurus site
   - name: Build docusaurus site
     shell: bash
-    working-directory: ${GITHUB_ACTION_PATH}/docusaurus
+    working-directory: ${{ github.action_path }}/docusaurus
     run: |
       ### Install docusaurus.
       npm install create-docusaurus@3.9.2
