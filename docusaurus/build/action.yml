@@ -14,25 +14,38 @@ inputs:
   targetDir:
     description: The directory to store the generated docusaurus website in.
     required: true
-    default: 'publish'
+    default: '${{ github.workspace }}/publish'
   docusaurusPath:
     description: Optionally supply the path the docusaurus project is created in.
     required: false
     default: '${GITHUB_ACTION_PATH}/docusaurus'
-  # docusaurus parameters
+  # KingTech template parameters
   siteName:
     description: The name of your site.
     required: false
     default: 'my-website'
-  version:
+  projectName:
+    description: The name of your project, used for example in the navbar. Default is the same as siteName.
+    required: false
+    default: ''
+  url:
+    description: The URL of the site, e.g. 'https://www.my-site.com'. Default is 'https://www.kingtech.nl'.
+    required: false
+    default: 'https://www.kingtech.nl'
+  baseUrl:
+    description: The base URL of the site, e.g. '/my-project/' if the site is hosted on a subpath. Default is '/'.
+    required: false
+    default: '/'
+  # Docusaurus build parameters
+  docusaurusVersion:
     description: Optionally a docusaurus version can be specified for the markdown. 
     required: false
     default: 'latest'
-  variant:
+  docusaurusVariant:
     description: The docusaurus template variant to use (javascript or typescript), default is javascript.
     required: false
     default: 'javascript'
-  template:
+  docusaurusTemplate:
     description: The docusaurus template to use, default is 'classic'.
     required: false
     default: 'classic'
@@ -56,7 +69,8 @@ runs:
     uses: actions/setup-node@v6
     with:
       node-version: 'latest'
-      #cache: 'npm'
+      cache: 'npm'
+      cache-dependency-path: "${GITHUB_ACTION_PATH}/package-lock.json"
 
   # Install docusaurus build
   - name: Build docusaurus site
@@ -68,16 +82,16 @@ runs:
       ### Setup docusaurus site (base).
       ### npx create-docusaurus@latest my-website classic
       echo 'building docusaurus site'
-      npx create-docusaurus@${{ inputs.version }} "${{ inputs.siteName }}" ${{ inputs.template }} --${{ inputs.variant }}
+      npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ inputs.siteName }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
       ### Apply customizations.
       #### Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
-      echo 'Removing build folder'
+      echo "Removing build folder"
       rm -rf "${{ inputs.siteName }}/build"
-      #echo 'Removing static folder'
+      #echo "Removing static folder"
       #rm -rf "${{ inputs.siteName }}/static"
-      #echo 'Removing docs folder'
+      #echo "Removing docs folder"
       #rm -rf "${{ inputs.siteName }}/docs"
-      #echo 'Removing blog folder'
+      #echo "Removing blog folder"
       #rm -rf "${{ inputs.siteName }}/blog"
       #### Copy source files to docusaurus path.
       echo 'copying source files from "${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}" to docusaurus path: "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"'
@@ -87,5 +101,5 @@ runs:
       cd "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       echo "Building docusaurus site in path: ${{ inputs.docusaurusPath }}/${{ inputs.siteName }}"
       npm run build
-      echo 'Storing out put in target directory "${{ inputs.targetDir }}"'
+      echo "Storing output in target directory: ${{ inputs.targetDir }}"
       cp -r "${{ inputs.docusaurusPath }}/${{ inputs.siteName }}/build" "${{ inputs.targetDir }}/"
