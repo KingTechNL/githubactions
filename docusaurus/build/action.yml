@@ -179,7 +179,7 @@ runs:
         cp "${{ github.workspace }}/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
-        wget -O "./${{ inputs.siteName }}/sidebars.js" "https://raw.githubusercontent.com/${{ github.action_repository }}/feature/docusaurus/docusaurus/templates/sidebars.js"
+        wget -O "./${{ inputs.siteName }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
       fi
 
   - name: Build docusaurus site
