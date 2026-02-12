@@ -18,7 +18,7 @@ inputs:
   docusaurusPath:
     description: Optionally supply the path the docusaurus project is created in.
     required: false
-    default: '${{ github.action_path }}/docusaurus'
+    default: '${{ GITHUB_ACTION_PATH }}/docusaurus'
   npmCache:
     description: Optionally specify the npm cache directory to speed up npm install.
     required: false
