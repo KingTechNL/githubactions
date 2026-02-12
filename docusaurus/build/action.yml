@@ -120,11 +120,11 @@ runs:
       rm -rf "${{ inputs.siteName }}/build"
 
       ### Static files for docusaurus site.
-      if [ ${{ inputs.staticDir }} != '-' ]; then
+      if [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Removing default static folder"
         rm -rf "${{ inputs.siteName }}/static/*"
       fi
-      if [ ${{ inputs.staticDir }} != '' ] && [ ${{ inputs.staticDir }} != '-' ]; then
+      if [ "${{ inputs.staticDir }}" != '' ] && [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Copying static folder from ${{ inputs.staticDir }}"
         cp -a "${{ inputs.staticDir }}/." "./${{ inputs.siteName }}/static/"
       elif [ -d "${{ github.workspace }}/static" ]; then
@@ -133,11 +133,11 @@ runs:
       fi
 
       ### Docs files for docusaurus site.
-      if [ ${{ inputs.docsDir }} != '-' ]; then
+      if [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Removing default docs folder"
         rm -rf "${{ inputs.siteName }}/docs/*"
       fi
-      if [ ${{ inputs.docsDir }} != '' ] && [ ${{ inputs.docsDir }} != '-' ]; then
+      if [ "${{ inputs.docsDir }}" != '' ] && [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Copying docs folder from ${{ inputs.docsDir }}"
         cp -a "${{ inputs.docsDir }}/." "./${{ inputs.siteName }}/docs/"
       elif [ -d "${{ github.workspace }}/docs" ]; then
@@ -146,11 +146,11 @@ runs:
       fi
 
       ### Blog files for docusaurus site.
-      if [ ${{ inputs.blogDir }} != '-' ]; then
+      if [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Removing default blog folder"
         rm -rf "${{ inputs.siteName }}/blog/*"
       fi
-      if [ ${{ inputs.blogDir }} != '' ] && [ ${{ inputs.blogDir }} != '-' ]; then
+      if [ "${{ inputs.blogDir }}" != '' ] && [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Copying blog folder from ${{ inputs.blogDir }}"
         cp -a "${{ inputs.blogDir }}/." "./${{ inputs.siteName }}/blog/"
       elif [ -d "${{ github.workspace }}/blog" ]; then
@@ -159,26 +159,26 @@ runs:
       fi
 
       ### Config files for docusaurus site.
-      if [ ${{ inputs.configFile }} != '' ] && [ ${{ inputs.configFile }} != '-' ]; then
+      if [ "${{ inputs.configFile }}" != '' ] && [ "${{ inputs.configFile }}" != '-' ]; then
         echo "Copying config file from ${{ inputs.configFile }}"
         cp "${{ inputs.configFile }}" "./${{ inputs.siteName }}/docusaurus.config.js"
       elif [ -f "${{ github.workspace }}/docusaurus.config.js" ]; then
         echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
         cp "${{ github.workspace }}/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
-      elif [ ${{ inputs.configFile }} == '' ]; then
-        echo "No config file specified, using default config file included in the action template"
+      elif [ "${{ inputs.configFile }}" == '' ]; then
+        echo "No config file specified, using default KingTech config file included in the action template"
         cp "${{ github.action_path }}/../templates/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
-      if [ ${{ inputs.sideBarsFile }} != '' ] && [ ${{ inputs.sideBarsFile }} != '-' ]; then
+      if [ "${{ inputs.sideBarsFile }}" != '' ] && [ "${{ inputs.sideBarsFile }}" != '-' ]; then
         echo "Copying sidebars file from ${{ inputs.sideBarsFile }}"
         cp "${{ inputs.sideBarsFile }}" "./${{ inputs.siteName }}/sidebars.js"
       elif [ -f "${{ github.workspace }}/sidebars.js" ]; then
         echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
         cp "${{ github.workspace }}/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
-      elif [ ${{ inputs.sideBarsFile }} == '' ]; then
-        echo "No sidebars file specified, using default sidebars file included in the action template"
+      elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
+        echo "No sidebars file specified, using default KingTech sidebars file included in the action template"
         cp "${{ github.action_path }}/../templates/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
       fi
 
