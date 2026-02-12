@@ -129,7 +129,7 @@ runs:
         echo "Removing default docs folder"
         rm -rf "${{ inputs.siteName }}/docs"
         tree "${{ github.workspace }}/docs"
-        cp -r "${{ github.workspace }}/docs/*" "./${{ inputs.siteName }}/docs/"
+        cp -a "${{ github.workspace }}/docs/." "./${{ inputs.siteName }}/docs/"
       fi
 
       if [ ${{ inputs.blogDir }} != '' ]; then
