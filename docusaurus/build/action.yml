@@ -86,7 +86,7 @@ runs:
       node-version: '${{ inputs.nodeVersion }}'
 
   # Build docusaurus site
-  - name: Build docusaurus site
+  - name: Setup docusaurus site
     shell: bash
     working-directory: ${{ github.action_path }}/docusaurus
     run: |
@@ -96,6 +96,11 @@ runs:
       ### npx create-docusaurus@latest my-website classic
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ inputs.siteName }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
+
+  - name: Configure docusaurus site
+    shell: bash
+    working-directory: ${{ github.action_path }}/docusaurus
+    run: |    
       ### Apply customizations.
       #### Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
       echo "Removing build folder"
