@@ -19,6 +19,14 @@ inputs:
     description: Optionally supply the path the docusaurus project is created in.
     required: false
     default: '${GITHUB_ACTION_PATH}/docusaurus'
+  npmCache:
+    description: Optionally specify the npm cache directory to speed up npm install.
+    required: false
+    default: ''
+  nodeVersion:
+    description: Optionally specify the node version to use, default is 'latest'.
+    required: false
+    default: 'latest'
   # KingTech template parameters
   siteName:
     description: The name of your site.
@@ -55,29 +63,34 @@ runs:
   steps:
 
   # Move to docusaurus action directory
-  - name: Move to docusaurus action directory
+  - name: Make sure docusaurus path exists
     shell: bash
     run: |
       export ORIGINAL_DIR=$(pwd)
       echo "ORIGINAL_DIR=$ORIGINAL_DIR" >> $GITHUB_ENV
-      echo "switching from $ORIGINAL_DIR to docusaurus path: ${{ inputs.docusaurusPath }}"
+      echo "storing original dir $ORIGINAL_DIR for later use"
       mkdir -p "${{ inputs.docusaurusPath }}"
-      cd "${{ inputs.docusaurusPath }}"
 
   # Install node.js
-  - name: Setup node.js
+  - name: Setup node.js from cache
     uses: actions/setup-node@v6
+    if: ${{ inputs.npmCache != '' }}
     with:
-      node-version: 'latest'
+      node-version: '${{ inputs.nodeVersion }}'
       cache: 'npm'
-      cache-dependency-path: "${GITHUB_ACTION_PATH}/package-lock.json"
+      cache-dependency-path: "${{ inputs.npmCache }}"
+  - name: Setup node.js without cache
+    uses: actions/setup-node@v6
+    if: ${{ inputs.npmCache == '' }}
+    with:
+      node-version: '${{ inputs.nodeVersion }}'
 
-  # Install docusaurus build
+  # Build docusaurus site
   - name: Build docusaurus site
     shell: bash
+    working-directory: ${{ inputs.docusaurusPath }}
     run: |
       ### Install docusaurus.
-      cd "${{ inputs.docusaurusPath }}"
       npm install create-docusaurus@3.9.2
       ### Setup docusaurus site (base).
       ### npx create-docusaurus@latest my-website classic
