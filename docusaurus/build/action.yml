@@ -7,22 +7,22 @@ description: "Build a static website (e.g. blog) using Docusaurus"
 
 # Inputs (parameters) for this action
 inputs:
-  sourceDir:
-    description: The directory the markdown files are stored in.
-    required: true
-    default: '.'
-  targetDir:
-    description: The directory to store the generated docusaurus website in.
-    required: true
-    default: '${{ github.workspace }}/publish'
-  npmCache:
-    description: Optionally specify the npm cache directory to speed up npm install.
+  docsDir:
+    description: The directory where the docusaurus docs are stored in the generated website, default is 'docs'.
     required: false
     default: ''
-  nodeVersion:
-    description: Optionally specify the node version to use, default is 'latest'.
+  staticDir:
+    description: The directory where the docusaurus static files are stored in the generated website, default is 'static'.
     required: false
-    default: 'latest'
+    default: ''
+  blogDir:
+    description: The directory where the docusaurus blog files are stored in the generated website, default is 'blog'.
+    required: false
+    default: ''
+  targetDir:
+    description: The directory to store the generated docusaurus website in. Default is ./publish .
+    required: true
+    default: '${{ github.workspace }}/publish'
   # KingTech template parameters
   siteName:
     description: The name of your site.
@@ -53,6 +53,15 @@ inputs:
     description: The docusaurus template to use, default is 'classic'.
     required: false
     default: 'classic'
+  # Dependencies
+  npmCache:
+    description: Optionally specify the npm cache directory to speed up npm install.
+    required: false
+    default: ''
+  nodeVersion:
+    description: Optionally specify the node version to use, default is 'latest'.
+    required: false
+    default: 'latest'
 
 runs:
   using: "composite"
@@ -82,7 +91,7 @@ runs:
     with:
       node-version: '${{ inputs.nodeVersion }}'
 
-  # Build docusaurus site
+  # Create basic docusaurus site
   - name: Setup docusaurus site
     shell: bash
     working-directory: ${{ github.action_path }}/docusaurus
@@ -94,23 +103,45 @@ runs:
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ inputs.siteName }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
 
+  # Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
   - name: Customize docusaurus site
     shell: bash
     working-directory: ${{ github.action_path }}/docusaurus
     run: |    
-      ### Apply customizations.
-      #### Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
       echo "Removing build folder"
       rm -rf "${{ inputs.siteName }}/build"
-      #echo "Removing static folder"
-      #rm -rf "${{ inputs.siteName }}/static"
-      #echo "Removing docs folder"
-      #rm -rf "${{ inputs.siteName }}/docs"
-      #echo "Removing blog folder"
-      #rm -rf "${{ inputs.siteName }}/blog"
-      #### Copy source files to docusaurus path.
-      echo 'copying source files from "${{ env.ORIGINAL_DIR }}/${{ inputs.sourceDir }}" to docusaurus path: "${{ github.action_path }}/docusaurus/${{ inputs.siteName }}"'
-      cd "${{ env.ORIGINAL_DIR }}"
+
+      if [ ${{ inputs.staticDir }} != '' ]; then
+        echo "Replacing static folder"
+        rm -rf "${{ inputs.siteName }}/static/*"
+        cp -r "${{ inputs.staticDir }}/*" "./${{ inputs.siteName }}/static/"
+      elif [ -d "${{ github.workspace }}/static" ]; then
+        echo "Removing default static folder"
+        rm -rf "${{ inputs.siteName }}/static"
+        cp -r "${{ github.workspace }}/static/*" "./${{ inputs.siteName }}/static/"
+      fi
+
+      if [ ${{ inputs.docsDir }} != '' ]; then
+        echo "Replacing docs folder"
+        rm -rf "${{ inputs.siteName }}/docs/*"
+        cp -r "${{ inputs.docsDir }}/*" "./${{ inputs.siteName }}/docs/"
+      elif [ -d "${{ github.workspace }}/docs" ]; then
+        echo "Removing default docs folder"
+        rm -rf "${{ inputs.siteName }}/docs"
+        cp -r "${{ github.workspace }}/docs/*" "./${{ inputs.siteName }}/docs/"
+      fi
+
+      if [ ${{ inputs.blogDir }} != '' ]; then
+        echo "Replacing blog folder"
+        rm -rf "${{ inputs.siteName }}/blog/*"
+        cp -r "${{ inputs.blogDir }}/*" "./${{ inputs.siteName }}/blog/"
+      elif [ -d "${{ github.workspace }}/blog" ]; then
+        echo "Removing default blog folder"
+        rm -rf "${{ inputs.siteName }}/blog"
+        cp -r "${{ github.workspace }}/blog/*" "./${{ inputs.siteName }}/blog/"
+      fi
+
+      #cd "${{ env.ORIGINAL_DIR }}"
       #cp -r "${{ inputs.sourceDir }}" "${{ github.action_path }}/docusaurus/${{ inputs.siteName }}"
 
   - name: Build docusaurus site

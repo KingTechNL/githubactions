@@ -22,7 +22,7 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.png',
   organizationName: 'kingtech', // Usually your GitHub org/user name.
-  projectName: projectName,//process.env.PROJECT_NAME, // Usually your repo name.
+  projectName: projectName, // Usually your repo name.
   plugins: [[ require.resolve('docusaurus-lunr-search'), {
     languages: ['en'], // language codes
     maxHits: 50
