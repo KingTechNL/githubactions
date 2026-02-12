@@ -23,6 +23,14 @@ inputs:
     description: The directory to store the generated docusaurus website in. Default is ./publish .
     required: true
     default: '${{ github.workspace }}/publish'
+  configFile:
+    description: Optionally specify a docusaurus config file to use for the generated website. Default is to use the default config file included in the action template.
+    required: false
+    default: ''
+  sideBarsFile:
+    description: Optionally specify a docusaurus sidebars file to use for the generated website. Default is to use the default sidebars file included in the action template.
+    required: false
+    default: ''
   # KingTech template parameters
   siteName:
     description: The name of your site.
@@ -111,39 +119,68 @@ runs:
       echo "Removing build folder"
       rm -rf "${{ inputs.siteName }}/build"
 
-      if [ ${{ inputs.staticDir }} != '' ]; then
-        echo "Replacing static folder"
-        rm -rf "${{ inputs.siteName }}/static/*"
-        cp -r "${{ inputs.staticDir }}/*" "./${{ inputs.siteName }}/static/"
-      elif [ -d "${{ github.workspace }}/static" ]; then
+      ### Static files for docusaurus site.
+      if [ ${{ inputs.staticDir }} != '-' ]; then
         echo "Removing default static folder"
-        rm -rf "${{ inputs.siteName }}/static"
-        cp -r "${{ github.workspace }}/static/*" "./${{ inputs.siteName }}/static/"
+        rm -rf "${{ inputs.siteName }}/static/*"
+      fi
+      if [ ${{ inputs.staticDir }} != '' ] && [ ${{ inputs.staticDir }} != '-' ]; then
+        echo "Copying static folder from ${{ inputs.staticDir }}"
+        cp -a "${{ inputs.staticDir }}/." "./${{ inputs.siteName }}/static/"
+      elif [ -d "${{ github.workspace }}/static" ]; then
+        echo "Copying static folder from ${{ github.workspace }}/static"
+        cp -a "${{ github.workspace }}/static/." "./${{ inputs.siteName }}/static/"
       fi
 
-      if [ ${{ inputs.docsDir }} != '' ]; then
-        echo "Replacing docs folder"
-        rm -rf "${{ inputs.siteName }}/docs/*"
-        cp -r "${{ inputs.docsDir }}/*" "./${{ inputs.siteName }}/docs/"
-      elif [ -d "${{ github.workspace }}/docs" ]; then
+      ### Docs files for docusaurus site.
+      if [ ${{ inputs.docsDir }} != '-' ]; then
         echo "Removing default docs folder"
-        rm -rf "${{ inputs.siteName }}/docs"
-        tree "${{ github.workspace }}/docs"
+        rm -rf "${{ inputs.siteName }}/docs/*"
+      fi
+      if [ ${{ inputs.docsDir }} != '' ] && [ ${{ inputs.docsDir }} != '-' ]; then
+        echo "Copying docs folder from ${{ inputs.docsDir }}"
+        cp -a "${{ inputs.docsDir }}/." "./${{ inputs.siteName }}/docs/"
+      elif [ -d "${{ github.workspace }}/docs" ]; then
+        echo "Copying docs folder from ${{ github.workspace }}/docs"
         cp -a "${{ github.workspace }}/docs/." "./${{ inputs.siteName }}/docs/"
       fi
 
-      if [ ${{ inputs.blogDir }} != '' ]; then
-        echo "Replacing blog folder"
-        rm -rf "${{ inputs.siteName }}/blog/*"
-        cp -r "${{ inputs.blogDir }}/*" "./${{ inputs.siteName }}/blog/"
-      elif [ -d "${{ github.workspace }}/blog" ]; then
+      ### Blog files for docusaurus site.
+      if [ ${{ inputs.blogDir }} != '-' ]; then
         echo "Removing default blog folder"
-        rm -rf "${{ inputs.siteName }}/blog"
-        cp -r "${{ github.workspace }}/blog/*" "./${{ inputs.siteName }}/blog/"
+        rm -rf "${{ inputs.siteName }}/blog/*"
+      fi
+      if [ ${{ inputs.blogDir }} != '' ] && [ ${{ inputs.blogDir }} != '-' ]; then
+        echo "Copying blog folder from ${{ inputs.blogDir }}"
+        cp -a "${{ inputs.blogDir }}/." "./${{ inputs.siteName }}/blog/"
+      elif [ -d "${{ github.workspace }}/blog" ]; then
+        echo "Copying blog folder from ${{ github.workspace }}/blog"
+        cp -a "${{ github.workspace }}/blog/." "./${{ inputs.siteName }}/blog/"
       fi
 
-      #cd "${{ env.ORIGINAL_DIR }}"
-      #cp -r "${{ inputs.sourceDir }}" "${{ github.action_path }}/docusaurus/${{ inputs.siteName }}"
+      ### Config files for docusaurus site.
+      if [ ${{ inputs.configFile }} != '' ] && [ ${{ inputs.configFile }} != '-' ]; then
+        echo "Copying config file from ${{ inputs.configFile }}"
+        cp "${{ inputs.configFile }}" "./${{ inputs.siteName }}/docusaurus.config.js"
+      elif [ -f "${{ github.workspace }}/docusaurus.config.js" ]; then
+        echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
+        cp "${{ github.workspace }}/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
+      elif [ ${{ inputs.configFile }} == '' ]; then
+        echo "No config file specified, using default config file included in the action template"
+        cp "${{ github.action_path }}/../templates/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
+      fi
+
+      ### Sidebars files for docusaurus site.
+      if [ ${{ inputs.sideBarsFile }} != '' ] && [ ${{ inputs.sideBarsFile }} != '-' ]; then
+        echo "Copying sidebars file from ${{ inputs.sideBarsFile }}"
+        cp "${{ inputs.sideBarsFile }}" "./${{ inputs.siteName }}/sidebars.js"
+      elif [ -f "${{ github.workspace }}/sidebars.js" ]; then
+        echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
+        cp "${{ github.workspace }}/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
+      elif [ ${{ inputs.sideBarsFile }} == '' ]; then
+        echo "No sidebars file specified, using default sidebars file included in the action template"
+        cp "${{ github.action_path }}/../templates/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
+      fi
 
   - name: Build docusaurus site
     shell: bash
