@@ -1,11 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-const math = require('remark-math');
-const katex = require('rehype-katex');
-const mermaid = import('mdx-mermaid');
+import {themes as prismThemes} from 'prism-react-renderer';
 
 const siteName= process.env.SITE_NAME
 const projectName= process.env.PROJECT_NAME || siteName
@@ -23,26 +19,20 @@ const config = {
   favicon: 'img/favicon.png',
   organizationName: 'kingtech', // Usually your GitHub org/user name.
   projectName: projectName, // Usually your repo name.
-  plugins: [[ require.resolve('docusaurus-lunr-search'), {
-    languages: ['en'], // language codes
-    maxHits: 50
-  }]],
   presets: [
     [
-      '@docusaurus/preset-classic',
-    {
-      docs: {
-        sidebarPath: require.resolve("./sidebars.js"),
-        routeBasePath: "/",
-        remarkPlugins: [mermaid, math],
-        rehypePlugins: [katex],
-      },
-      blog: false, // Optional: disable the blog plugin
-      // ...
-    
-        theme: {
-          customCss: require.resolve('./static/css/custom.css'),
+      'classic',
+      {
+        docs: {
+            sidebarPath: require.resolve("./sidebars.js"),
+            routeBasePath: "/",
         },
+        blog: false, // Optional: disable the blog plugin
+        // ...
+        
+            theme: {
+            customCss: require.resolve('./static/css/custom.css'),
+            },
       },
     ],
   ],
@@ -66,12 +56,6 @@ const config = {
         },
         items: [
           {
-            type: 'docsVersionDropdown',
-            docId: 'intro',
-            position: 'left',
-            label: 'Documentation',
-          },
-          {
             href: url,
             label: 'KingTech',
             position: 'right',
@@ -80,28 +64,13 @@ const config = {
       },
       footer: {
         style: 'dark',
-        links: [
-          {
-            title: 'Docs',
-            items: [
-              {
-                label: 'Last stable version',
-                to: '/',
-              }
-            ],
-          },
-        ],
         copyright: `Copyright © ${new Date().getFullYear()} KingTech.`,
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        theme: prismThemes.github,
+        darkTheme: prismThemes.dracula,
       },
     }),
-    markdown: {
-      mermaid: true,
-    },
-    themes: ['@docusaurus/theme-mermaid'], 
 };
 
 module.exports = config;
