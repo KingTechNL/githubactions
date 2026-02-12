@@ -128,6 +128,7 @@ runs:
       elif [ -d "${{ github.workspace }}/docs" ]; then
         echo "Removing default docs folder"
         rm -rf "${{ inputs.siteName }}/docs"
+        tree "${{ github.workspace }}/docs"
         cp -r "${{ github.workspace }}/docs/*" "./${{ inputs.siteName }}/docs/"
       fi
 
