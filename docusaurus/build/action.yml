@@ -166,8 +166,8 @@ runs:
         echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
         cp "${{ github.workspace }}/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
-        echo "No config file specified, using default KingTech config file included in the action template"
-        cp "${{ github.action_path }}/../templates/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
+        echo "No config file specified, downloading default KingTech config file from GitHub"
+        wget -q -O "./${{ inputs.siteName }}/docusaurus.config.js" "https://raw.githubusercontent.com/${{ github.action_repository }}/feature/docusaurus/docusaurus/templates/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
@@ -178,8 +178,8 @@ runs:
         echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
         cp "${{ github.workspace }}/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
-        echo "No sidebars file specified, using default KingTech sidebars file included in the action template"
-        cp "${{ github.action_path }}/../templates/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
+        echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
+        wget -q -O "./${{ inputs.siteName }}/sidebars.js" "https://raw.githubusercontent.com/${{ github.action_repository }}/feature/docusaurus/docusaurus/templates/sidebars.js"
       fi
 
   - name: Build docusaurus site
