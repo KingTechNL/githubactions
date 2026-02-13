@@ -1,0 +1,24 @@
+name: 'replace-env'
+description: 'Replace environment variables in files'
+branding:
+  icon: briefcase
+  color: blue
+inputs:
+  input_file:
+    description: 'Path to file with the placeholders to replace. If directory, will replace all files in the directory.'
+    required: true
+  output_file:
+    description: 'Path to output file. If `input_file` is directory, will be a directory too. Optional, defaults to `input_file`'
+    default: ''
+    required: false
+  fail_on_missing_env:
+    description: 'Whether to fail if an env var mentioned in the input file does not exist'
+    default: 'false'
+    required: false
+  pattern:
+    description: 'Pattern to replace the variables: single_dollar_brackets, double_dollar_brackets, double_underscore'
+    default: 'single_dollar_brackets'
+    required: false
+runs:
+  using: 'node16'
+  main: 'lib/index.js'
