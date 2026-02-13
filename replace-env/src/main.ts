@@ -73,28 +73,30 @@ async function replaceInDirectory(
 ) {
   const files = await fs.readdir(inputDirectory)
 
+  core.info(`[replace-env] Replacing in directory ${inputDirectory} ...`)
+
   await Promise.all(
     files.map(async file => {
       const inputPath = path.join(inputDirectory, file)
       const resultPath = path.join(resultDirectory, file)
       const pathType = checkPath(inputPath)
       
-      switch (checkPath(inputPath)) {
+      switch (pathType) {
         case 'directory': {
           await replaceInDirectory({
-          pattern, matcher,
-          inputDirectory: inputPath,
-          failOnMissingEnv,
-          resultDirectory: inputPath,
+            pattern, matcher,
+            inputDirectory: inputPath,
+            failOnMissingEnv,
+            resultDirectory: resultPath,
         })
           break
         }
         case 'file': {
           await replaceFile({
-          pattern, matcher,
-          inputFile: inputPath,
-          failOnMissingEnv,
-          resultFile: resultPath,
+            pattern, matcher,
+            inputFile: inputPath,
+            failOnMissingEnv,
+            resultFile: resultPath,
         })
           break
         }
