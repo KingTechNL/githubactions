@@ -81,6 +81,8 @@ async function replaceInDirectory(
       const resultPath = path.join(resultDirectory, file)
       const pathType = checkPath(inputPath)
       
+      core.info(`[replace-env] Processing ${inputPath} (type: ${pathType})`)
+      
       switch (pathType) {
         case 'directory': {
           await fs.mkdir(resultPath, { recursive: true })
