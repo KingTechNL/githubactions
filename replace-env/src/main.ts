@@ -83,6 +83,7 @@ async function replaceInDirectory(
       
       switch (pathType) {
         case 'directory': {
+          await fs.mkdir(resultPath, { recursive: true })
           await replaceInDirectory({
             pattern, matcher,
             inputDirectory: inputPath,
