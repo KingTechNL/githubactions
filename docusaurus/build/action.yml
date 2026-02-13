@@ -189,7 +189,7 @@ runs:
 
   - name: Build docusaurus site
     shell: bash
-    working-directory: ${{ github.action_path }}/docusaurus/${{ SITE_NAME_URI }}
+    working-directory: ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}
     run: |      
       ### Build docusaurus site.
       echo "Building docusaurus site"
