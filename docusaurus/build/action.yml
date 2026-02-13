@@ -187,6 +187,17 @@ runs:
         wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
       fi
 
+  # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
+  # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
+  - name: replace-env
+    uses: nightstory/replace-env@v2
+    with:
+      input_file: ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}
+      #output_file:
+      #pattern: '\$\{(\w+)\}'
+      fail_on_missing_env: true
+
+  # Install docusaurus dependencies and build the site
   - name: Build docusaurus site
     shell: bash
     working-directory: ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}
@@ -195,6 +206,7 @@ runs:
       echo "Building docusaurus site"
       npm run build
 
+  # Store output in target directory
   - name: Store output in target directory
     shell: bash
     run: |      
