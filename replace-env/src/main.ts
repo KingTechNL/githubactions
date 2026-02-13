@@ -4,6 +4,7 @@ import path from 'node:path'
 
 import getOptions, { Options, ReplacementPattern, validateOptions } from './options'
 import { checkPath } from './utils'
+import options from './options'
 
 async function main() {
   const options: Options = getOptions()
@@ -78,21 +79,29 @@ async function replaceInDirectory(
       const resultPath = path.join(resultDirectory, file)
       const pathType = checkPath(inputPath)
       
-      if (pathType === 'directory') {
-        await fs.mkdir(resultPath, { recursive: true })
-        await replaceInDirectory({
+      switch (checkPath(inputPath)) {
+        case 'directory': {
+          await replaceInDirectory({
           pattern, matcher,
           inputDirectory: inputPath,
           failOnMissingEnv,
-          resultDirectory: resultPath,
+          resultDirectory: inputPath,
         })
-      } else if (pathType === 'file') {
-        await replaceFile({
+          break
+        }
+        case 'file': {
+          await replaceFile({
           pattern, matcher,
           inputFile: inputPath,
           failOnMissingEnv,
           resultFile: resultPath,
         })
+          break
+        }
+        case 'otherwise': {
+          core.warning(`[replace-env] Skipping ${inputPath} as it is neither a file nor a directory.`)
+          break
+        }
       }
     }),
   )
