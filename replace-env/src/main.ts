@@ -34,33 +34,37 @@ async function main() {
     }
   }
 
-  switch (checkPath(options.inputFile)) {
-    case 'directory': {
-      const resultDirectory = options.outputFile ?? options.inputFile
+  for (const inputFile of options.inputFiles) {
+    core.info(`[replace-env] Processing input: ${inputFile}`)
+    
+    switch (checkPath(inputFile)) {
+      case 'directory': {
+        const resultDirectory = options.outputFile ?? inputFile
 
-      if (resultDirectory !== options.inputFile) {
-        await fs.mkdir(resultDirectory, { recursive: true })
+        if (resultDirectory !== inputFile) {
+          await fs.mkdir(resultDirectory, { recursive: true })
+        }
+
+        await replaceInDirectory({
+          pattern, matcher,
+          inputDirectory: inputFile,
+          failOnMissingEnv: options.failOnMissingEnv,
+          resultDirectory,
+        })
+        break
       }
-
-      await replaceInDirectory({
-        pattern, matcher,
-        inputDirectory: options.inputFile,
-        failOnMissingEnv: options.failOnMissingEnv,
-        resultDirectory,
-      })
-      break
-    }
-    case 'file': {
-      await replaceFile({
-        pattern, matcher,
-        inputFile: options.inputFile,
-        failOnMissingEnv: options.failOnMissingEnv,
-        resultFile: options.outputFile ?? options.inputFile,
-      })
-      break
-    }
-    case 'otherwise': {
-      throw new Error('[replace-env] input_file does not exist or an error occured')
+      case 'file': {
+        await replaceFile({
+          pattern, matcher,
+          inputFile: inputFile,
+          failOnMissingEnv: options.failOnMissingEnv,
+          resultFile: options.outputFile ?? inputFile,
+        })
+        break
+      }
+      case 'otherwise': {
+        throw new Error(`[replace-env] input_file '${inputFile}' does not exist or an error occured`)
+      }
     }
   }
 }

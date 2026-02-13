@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 
 export interface Options {
-  readonly inputFile: string
+  readonly inputFiles: string[]
   readonly outputFile: string | null
   readonly failOnMissingEnv: boolean
   readonly pattern: ReplacementPattern
@@ -48,8 +48,11 @@ function getFlag(inputKey: string, envKey: string | null, def: boolean) {
 }
 
 function getOptions(): Options {
+  const inputFileString = requireOption('input_file', null)
+  const inputFiles = inputFileString.split('\n').map(f => f.trim()).filter(f => f.length > 0)
+  
   return {
-    inputFile: requireOption('input_file', null),
+    inputFiles,
     outputFile: findOption('output_file', null),
     failOnMissingEnv: getFlag('fail_on_missing_env', null, false),
     pattern: patternMap[findOption('pattern', null) ?? defaultPattern]!,
@@ -59,7 +62,7 @@ function getOptions(): Options {
 export function validateOptions(o: Options) {
   let result = true
 
-  if ([ o.inputFile ].some(v => v.length === 0)) {
+  if (o.inputFiles.length === 0) {
     core.setFailed(`input_file must not be empty`)
     result = false
   }

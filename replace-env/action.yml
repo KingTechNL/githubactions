@@ -5,7 +5,7 @@ branding:
   color: blue
 inputs:
   input_file:
-    description: 'Path to file with the placeholders to replace. If directory, will replace all files in the directory.'
+    description: 'Path to file(s) or directory/directories with the placeholders to replace. Multiple paths can be specified using multiline format. If directory, will replace all files in the directory recursively.'
     required: true
   output_file:
     description: 'Path to output file. If `input_file` is directory, will be a directory too. Optional, defaults to `input_file`'
