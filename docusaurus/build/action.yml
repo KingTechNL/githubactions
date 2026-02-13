@@ -176,7 +176,7 @@ runs:
         cp "${{ github.workspace }}/docusaurus.config.js" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
         echo "No config file specified, downloading default KingTech config file from GitHub"
-        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/docusaurus.config.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus/templates/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
@@ -188,7 +188,7 @@ runs:
         cp "${{ github.workspace }}/sidebars.js" "./${{ env.SITE_NAME_URI }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
-        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus/templates/sidebars.js"
       fi
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
