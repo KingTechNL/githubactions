@@ -41,18 +41,12 @@ async function main() {
         await fs.mkdir(resultDirectory, { recursive: true })
       }
 
-      const files = await fs.readdir(options.inputFile)
-
-      await Promise.all(
-        files.map(async file => (
-          await replaceFile({
-            pattern, matcher,
-            inputFile: path.join(options.inputFile, file),
-            failOnMissingEnv: options.failOnMissingEnv,
-            resultFile: path.join(resultDirectory, file),
-          })
-        )),
-      )
+      await replaceInDirectory({
+        pattern, matcher,
+        inputDirectory: options.inputFile,
+        failOnMissingEnv: options.failOnMissingEnv,
+        resultDirectory,
+      })
       break
     }
     case 'file': {
@@ -68,6 +62,40 @@ async function main() {
       throw new Error('[replace-env] input_file does not exist or an error occured')
     }
   }
+}
+
+async function replaceInDirectory(
+  { inputDirectory, resultDirectory, pattern, matcher, failOnMissingEnv }: {
+    pattern: RegExp, matcher: RegExp, failOnMissingEnv: boolean,
+    inputDirectory: string, resultDirectory: string
+  },
+) {
+  const files = await fs.readdir(inputDirectory)
+
+  await Promise.all(
+    files.map(async file => {
+      const inputPath = path.join(inputDirectory, file)
+      const resultPath = path.join(resultDirectory, file)
+      const pathType = checkPath(inputPath)
+      
+      if (pathType === 'directory') {
+        await fs.mkdir(resultPath, { recursive: true })
+        await replaceInDirectory({
+          pattern, matcher,
+          inputDirectory: inputPath,
+          failOnMissingEnv,
+          resultDirectory: resultPath,
+        })
+      } else if (pathType === 'file') {
+        await replaceFile({
+          pattern, matcher,
+          inputFile: inputPath,
+          failOnMissingEnv,
+          resultFile: resultPath,
+        })
+      }
+    }),
+  )
 }
 
 async function replaceFile(
