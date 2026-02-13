@@ -192,7 +192,11 @@ runs:
   - name: replace-env
     uses: kingtechnl/githubactions/replace-env@feature/docusaurus
     with:
-      input_file: ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}
+      input_file: |
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docs
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/blog
       #output_file:
       #pattern: '\$\{(\w+)\}'
       fail_on_missing_env: true
