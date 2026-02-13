@@ -114,7 +114,7 @@ runs:
       ### Setup docusaurus site (base).
       ### npx create-docusaurus@latest my-website classic
       echo 'building docusaurus site'
-      npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
+      npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ env.SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
 
   # Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
   - name: Customize docusaurus site
@@ -122,69 +122,69 @@ runs:
     working-directory: ${{ github.action_path }}/docusaurus
     run: |    
       echo "Removing build folder"
-      rm -rf "${{ SITE_NAME_URI }}/build"
+      rm -rf "${{ env.SITE_NAME_URI }}/build"
 
       ### Static files for docusaurus site.
       if [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Removing default static folder"
-        rm -rf "${{ SITE_NAME_URI }}/static/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/static/*"
       fi
       if [ "${{ inputs.staticDir }}" != '' ] && [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Copying static folder from ${{ inputs.staticDir }}"
-        cp -a "${{ inputs.staticDir }}/." "./${{ SITE_NAME_URI }}/static/"
+        cp -a "${{ inputs.staticDir }}/." "./${{ env.SITE_NAME_URI }}/static/"
       elif [ -d "${{ github.workspace }}/static" ]; then
         echo "Copying static folder from ${{ github.workspace }}/static"
-        cp -a "${{ github.workspace }}/static/." "./${{ SITE_NAME_URI }}/static/"
+        cp -a "${{ github.workspace }}/static/." "./${{ env.SITE_NAME_URI }}/static/"
       fi
 
       ### Docs files for docusaurus site.
       if [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Removing default docs folder"
-        rm -rf "${{ SITE_NAME_URI }}/docs/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/docs/*"
       fi
       if [ "${{ inputs.docsDir }}" != '' ] && [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Copying docs folder from ${{ inputs.docsDir }}"
-        cp -a "${{ inputs.docsDir }}/." "./${{ SITE_NAME_URI }}/docs/"
+        cp -a "${{ inputs.docsDir }}/." "./${{ env.SITE_NAME_URI }}/docs/"
       elif [ -d "${{ github.workspace }}/docs" ]; then
         echo "Copying docs folder from ${{ github.workspace }}/docs"
-        cp -a "${{ github.workspace }}/docs/." "./${{ SITE_NAME_URI }}/docs/"
+        cp -a "${{ github.workspace }}/docs/." "./${{ env.SITE_NAME_URI }}/docs/"
       fi
 
       ### Blog files for docusaurus site.
       if [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Removing default blog folder"
-        rm -rf "${{ SITE_NAME_URI }}/blog/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/blog/*"
       fi
       if [ "${{ inputs.blogDir }}" != '' ] && [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Copying blog folder from ${{ inputs.blogDir }}"
-        cp -a "${{ inputs.blogDir }}/." "./${{ SITE_NAME_URI }}/blog/"
+        cp -a "${{ inputs.blogDir }}/." "./${{ env.SITE_NAME_URI }}/blog/"
       elif [ -d "${{ github.workspace }}/blog" ]; then
         echo "Copying blog folder from ${{ github.workspace }}/blog"
-        cp -a "${{ github.workspace }}/blog/." "./${{ SITE_NAME_URI }}/blog/"
+        cp -a "${{ github.workspace }}/blog/." "./${{ env.SITE_NAME_URI }}/blog/"
       fi
 
       ### Config files for docusaurus site.
       if [ "${{ inputs.configFile }}" != '' ] && [ "${{ inputs.configFile }}" != '-' ]; then
         echo "Copying config file from ${{ inputs.configFile }}"
-        cp "${{ inputs.configFile }}" "./${{ SITE_NAME_URI }}/docusaurus.config.js"
+        cp "${{ inputs.configFile }}" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
       elif [ -f "${{ github.workspace }}/docusaurus.config.js" ]; then
         echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
-        cp "${{ github.workspace }}/docusaurus.config.js" "./${{ SITE_NAME_URI }}/docusaurus.config.js"
+        cp "${{ github.workspace }}/docusaurus.config.js" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
         echo "No config file specified, downloading default KingTech config file from GitHub"
-        wget -O "./${{ SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/docusaurus.config.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
       if [ "${{ inputs.sideBarsFile }}" != '' ] && [ "${{ inputs.sideBarsFile }}" != '-' ]; then
         echo "Copying sidebars file from ${{ inputs.sideBarsFile }}"
-        cp "${{ inputs.sideBarsFile }}" "./${{ SITE_NAME_URI }}/sidebars.js"
+        cp "${{ inputs.sideBarsFile }}" "./${{ env.SITE_NAME_URI }}/sidebars.js"
       elif [ -f "${{ github.workspace }}/sidebars.js" ]; then
         echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
-        cp "${{ github.workspace }}/sidebars.js" "./${{ SITE_NAME_URI }}/sidebars.js"
+        cp "${{ github.workspace }}/sidebars.js" "./${{ env.SITE_NAME_URI }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
-        wget -O "./${{ SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
       fi
 
   - name: Build docusaurus site
@@ -199,4 +199,4 @@ runs:
     shell: bash
     run: |      
       echo "Storing output in target directory: ${{ inputs.targetDir }}"
-      cp -r "${{ github.action_path }}/docusaurus/${{ SITE_NAME_URI }}/build" "${{ inputs.targetDir }}/"
+      cp -r "${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/build" "${{ inputs.targetDir }}/"
