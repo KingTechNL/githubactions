@@ -48,6 +48,10 @@ inputs:
     description: The base URL of the site, e.g. '/my-project/' if the site is hosted on a subpath. Default is '/'.
     required: false
     default: '/'
+  replaceEnv:
+    description: Whether to replace environment variables in the docusaurus config and sidebars files. Default is true, which allows to use environment variables in the config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
+    required: false
+    default: 'false'
   # Docusaurus build parameters
   docusaurusVersion:
     description: Optionally a docusaurus version can be specified for the markdown. 
@@ -190,6 +194,7 @@ runs:
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
   - name: replace-env
+    if: inputs.replaceEnv == 'true'
     uses: kingtechnl/githubactions/replace-env@feature/docusaurus
     with:
       input_file: |
@@ -197,6 +202,16 @@ runs:
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docs
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/blog
+      #output_file:
+      #pattern: '\$\{(\w+)\}'
+      fail_on_missing_env: true
+  - name: replace-env
+    if: inputs.replaceEnv != 'true'
+    uses: kingtechnl/githubactions/replace-env@feature/docusaurus
+    with:
+      input_file: |
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
       #output_file:
       #pattern: '\$\{(\w+)\}'
       fail_on_missing_env: true
