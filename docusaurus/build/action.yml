@@ -81,7 +81,12 @@ runs:
     run: |
       export ORIGINAL_DIR=$(pwd)
       echo "ORIGINAL_DIR=$ORIGINAL_DIR" >> $GITHUB_ENV
-      echo "storing original dir $ORIGINAL_DIR for later use"
+      echo "stored original dir $ORIGINAL_DIR for later use"
+
+      export SITE_NAME_URI=$(echo "${{ inputs.siteName }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+      echo "SITE_NAME_URI=$SITE_NAME_URI" >> $GITHUB_ENV
+      echo "converted siteName '${{ inputs.siteName }}' to URI-safe format: $SITE_NAME_URI"
+
       echo "creating docusaurus action path: ${{ github.action_path }}/docusaurus"
       mkdir -p "${{ github.action_path }}/docusaurus"
 
@@ -109,7 +114,7 @@ runs:
       ### Setup docusaurus site (base).
       ### npx create-docusaurus@latest my-website classic
       echo 'building docusaurus site'
-      npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ inputs.siteName }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
+      npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
 
   # Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
   - name: Customize docusaurus site
@@ -117,74 +122,74 @@ runs:
     working-directory: ${{ github.action_path }}/docusaurus
     run: |    
       echo "Removing build folder"
-      rm -rf "${{ inputs.siteName }}/build"
+      rm -rf "${{ SITE_NAME_URI }}/build"
 
       ### Static files for docusaurus site.
       if [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Removing default static folder"
-        rm -rf "${{ inputs.siteName }}/static/*"
+        rm -rf "${{ SITE_NAME_URI }}/static/*"
       fi
       if [ "${{ inputs.staticDir }}" != '' ] && [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Copying static folder from ${{ inputs.staticDir }}"
-        cp -a "${{ inputs.staticDir }}/." "./${{ inputs.siteName }}/static/"
+        cp -a "${{ inputs.staticDir }}/." "./${{ SITE_NAME_URI }}/static/"
       elif [ -d "${{ github.workspace }}/static" ]; then
         echo "Copying static folder from ${{ github.workspace }}/static"
-        cp -a "${{ github.workspace }}/static/." "./${{ inputs.siteName }}/static/"
+        cp -a "${{ github.workspace }}/static/." "./${{ SITE_NAME_URI }}/static/"
       fi
 
       ### Docs files for docusaurus site.
       if [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Removing default docs folder"
-        rm -rf "${{ inputs.siteName }}/docs/*"
+        rm -rf "${{ SITE_NAME_URI }}/docs/*"
       fi
       if [ "${{ inputs.docsDir }}" != '' ] && [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Copying docs folder from ${{ inputs.docsDir }}"
-        cp -a "${{ inputs.docsDir }}/." "./${{ inputs.siteName }}/docs/"
+        cp -a "${{ inputs.docsDir }}/." "./${{ SITE_NAME_URI }}/docs/"
       elif [ -d "${{ github.workspace }}/docs" ]; then
         echo "Copying docs folder from ${{ github.workspace }}/docs"
-        cp -a "${{ github.workspace }}/docs/." "./${{ inputs.siteName }}/docs/"
+        cp -a "${{ github.workspace }}/docs/." "./${{ SITE_NAME_URI }}/docs/"
       fi
 
       ### Blog files for docusaurus site.
       if [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Removing default blog folder"
-        rm -rf "${{ inputs.siteName }}/blog/*"
+        rm -rf "${{ SITE_NAME_URI }}/blog/*"
       fi
       if [ "${{ inputs.blogDir }}" != '' ] && [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Copying blog folder from ${{ inputs.blogDir }}"
-        cp -a "${{ inputs.blogDir }}/." "./${{ inputs.siteName }}/blog/"
+        cp -a "${{ inputs.blogDir }}/." "./${{ SITE_NAME_URI }}/blog/"
       elif [ -d "${{ github.workspace }}/blog" ]; then
         echo "Copying blog folder from ${{ github.workspace }}/blog"
-        cp -a "${{ github.workspace }}/blog/." "./${{ inputs.siteName }}/blog/"
+        cp -a "${{ github.workspace }}/blog/." "./${{ SITE_NAME_URI }}/blog/"
       fi
 
       ### Config files for docusaurus site.
       if [ "${{ inputs.configFile }}" != '' ] && [ "${{ inputs.configFile }}" != '-' ]; then
         echo "Copying config file from ${{ inputs.configFile }}"
-        cp "${{ inputs.configFile }}" "./${{ inputs.siteName }}/docusaurus.config.js"
+        cp "${{ inputs.configFile }}" "./${{ SITE_NAME_URI }}/docusaurus.config.js"
       elif [ -f "${{ github.workspace }}/docusaurus.config.js" ]; then
         echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
-        cp "${{ github.workspace }}/docusaurus.config.js" "./${{ inputs.siteName }}/docusaurus.config.js"
+        cp "${{ github.workspace }}/docusaurus.config.js" "./${{ SITE_NAME_URI }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
         echo "No config file specified, downloading default KingTech config file from GitHub"
-        wget -O "./${{ inputs.siteName }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/docusaurus.config.js"
+        wget -O "./${{ SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
       if [ "${{ inputs.sideBarsFile }}" != '' ] && [ "${{ inputs.sideBarsFile }}" != '-' ]; then
         echo "Copying sidebars file from ${{ inputs.sideBarsFile }}"
-        cp "${{ inputs.sideBarsFile }}" "./${{ inputs.siteName }}/sidebars.js"
+        cp "${{ inputs.sideBarsFile }}" "./${{ SITE_NAME_URI }}/sidebars.js"
       elif [ -f "${{ github.workspace }}/sidebars.js" ]; then
         echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
-        cp "${{ github.workspace }}/sidebars.js" "./${{ inputs.siteName }}/sidebars.js"
+        cp "${{ github.workspace }}/sidebars.js" "./${{ SITE_NAME_URI }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
-        wget -O "./${{ inputs.siteName }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
+        wget -O "./${{ SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/dc995e2cb0bed8f53407d46218872a4e71217265/docusaurus/templates/sidebars.js"
       fi
 
   - name: Build docusaurus site
     shell: bash
-    working-directory: ${{ github.action_path }}/docusaurus/${{ inputs.siteName }}
+    working-directory: ${{ github.action_path }}/docusaurus/${{ SITE_NAME_URI }}
     run: |      
       ### Build docusaurus site.
       echo "Building docusaurus site"
@@ -194,4 +199,4 @@ runs:
     shell: bash
     run: |      
       echo "Storing output in target directory: ${{ inputs.targetDir }}"
-      cp -r "${{ github.action_path }}/docusaurus/${{ inputs.siteName }}/build" "${{ inputs.targetDir }}/"
+      cp -r "${{ github.action_path }}/docusaurus/${{ SITE_NAME_URI }}/build" "${{ inputs.targetDir }}/"
