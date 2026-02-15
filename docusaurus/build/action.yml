@@ -132,18 +132,18 @@ runs:
     shell: bash
     working-directory: ${{ github.action_path }}/docusaurus
     run: |    
-      ### Customize docusaurus site by copying files from the specified input directories (staticDir, docsDir, blogDir) to the docusaurus site folder. If the input directories are not specified, it will look for the default folders in the github workspace (e.g. ./static, ./docs, ./blog) and copy them if they exist. If the input directories are specified as '-', it will keep the default content of the docusaurus site for that type of content (e.g. if staticDir is '-', it will keep the default static folder of the docusaurus site). This allows to easily customize the content of the generated website by providing the desired content in the github repository or by specifying custom directories for each type of content.
+      ### Customize docusaurus site by copying files from the specified input directories (staticDir, docsDir, blogDir, srcDir) to the docusaurus site folder. If the input directories are not specified, it will look for the default folders in the github workspace (e.g. ./static, ./docs, ./blog) and copy them if they exist. If the input directories are specified as '-', it will keep the default content of the docusaurus site for that type of content (e.g. if staticDir is '-', it will keep the default static folder of the docusaurus site). This allows to easily customize the content of the generated website by providing the desired content in the github repository or by specifying custom directories for each type of content.
       echo "Removing build folder"
       rm -rf "${{ env.SITE_NAME_URI }}/build"
 
       ### Docs files for docusaurus site.
       if [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Removing default docs folder"
-        rm -rf "${{ env.SITE_NAME_URI }}/docs/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/docs"
       fi
       if [ "${{ inputs.docsDir }}" != '' ] && [ "${{ inputs.docsDir }}" != '-' ]; then
         echo "Copying docs folder from ${{ inputs.docsDir }}"
-        cp -a "${{ inputs.docsDir }}/." "./${{ env.SITE_NAME_URI }}/docs/"
+        cp -a "${{ inputs.docsDir }}/" "./${{ env.SITE_NAME_URI }}/docs/"
       elif [ -d "${{ github.workspace }}/docs" ]; then
         echo "Copying docs folder from ${{ github.workspace }}/docs"
         cp -a "${{ github.workspace }}/docs/." "./${{ env.SITE_NAME_URI }}/docs/"
@@ -152,11 +152,11 @@ runs:
       ### Blog files for docusaurus site.
       if [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Removing default blog folder"
-        rm -rf "${{ env.SITE_NAME_URI }}/blog/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/blog"
       fi
       if [ "${{ inputs.blogDir }}" != '' ] && [ "${{ inputs.blogDir }}" != '-' ]; then
         echo "Copying blog folder from ${{ inputs.blogDir }}"
-        cp -a "${{ inputs.blogDir }}/." "./${{ env.SITE_NAME_URI }}/blog/"
+        cp -a "${{ inputs.blogDir }}/" "./${{ env.SITE_NAME_URI }}/blog/"
       elif [ -d "${{ github.workspace }}/blog" ]; then
         echo "Copying blog folder from ${{ github.workspace }}/blog"
         cp -a "${{ github.workspace }}/blog/." "./${{ env.SITE_NAME_URI }}/blog/"
@@ -165,11 +165,11 @@ runs:
       ### Src files for docusaurus site.
       if [ "${{ inputs.srcDir }}" != '-' ]; then
         echo "Removing default src folder"
-        rm -rf "${{ env.SITE_NAME_URI }}/src/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/src"
       fi
       if [ "${{ inputs.srcDir }}" != '' ] && [ "${{ inputs.srcDir }}" != '-' ]; then
         echo "Copying src folder from ${{ inputs.srcDir }}"
-        cp -a "${{ inputs.srcDir }}/." "./${{ env.SITE_NAME_URI }}/src/"
+        cp -a "${{ inputs.srcDir }}/" "./${{ env.SITE_NAME_URI }}/src/"
       elif [ -d "${{ github.workspace }}/src" ]; then
         echo "Copying src folder from ${{ github.workspace }}/src"
         cp -a "${{ github.workspace }}/src/." "./${{ env.SITE_NAME_URI }}/src/"
@@ -178,11 +178,11 @@ runs:
       ### Static files for docusaurus site.
       if [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Removing default static folder"
-        rm -rf "${{ env.SITE_NAME_URI }}/static/*"
+        rm -rf "${{ env.SITE_NAME_URI }}/static"
       fi
       if [ "${{ inputs.staticDir }}" != '' ] && [ "${{ inputs.staticDir }}" != '-' ]; then
         echo "Copying static folder from ${{ inputs.staticDir }}"
-        cp -a "${{ inputs.staticDir }}/." "./${{ env.SITE_NAME_URI }}/static/"
+        cp -a "${{ inputs.staticDir }}/" "./${{ env.SITE_NAME_URI }}/static/"
       elif [ -d "${{ github.workspace }}/static" ]; then
         echo "Copying static folder from ${{ github.workspace }}/static"
         cp -a "${{ github.workspace }}/static/." "./${{ env.SITE_NAME_URI }}/static/"
