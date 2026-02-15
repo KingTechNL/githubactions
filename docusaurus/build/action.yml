@@ -207,7 +207,7 @@ runs:
       echo BASE_URL="$BASE_URL" >> $GITHUB_ENV
       export CUSTOM_CSS="${{ inputs.customCss }}"
       echo CUSTOM_CSS="$CUSTOM_CSS" >> $GITHUB_ENV
-      
+
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
   - name: replace-env

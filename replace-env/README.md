@@ -1,6 +1,30 @@
-# Replace environment variables in files in a GitHub Action
+# Replace-env action
+The 'replace-env' action is used to replace environment variable placeholders in files with their actual values from the environment.
 
-## Inputs
+For example, if your file contains ${FOO_BAR_123} and you have an environment variable FOO_BAR_123='literally whatever', the action will replace the placeholder with the actual value, resulting in literally whatever in the file.
+
+Key features:
+- Works on single files or entire directories (recursively)
+- Supports multiple placeholder formats: ${VAR}, ${{VAR}}, or __VAR__  (⚠️ no spaces around the key.)
+- Can process multiple files/directories at once (multiline input)
+- Optionally fails if a referenced environment variable doesn't exist
+
+## Usage
+
+```
+  - name: replace-env
+    uses: kingtechnl/githubactions/replace-env@main
+    with:
+      input_file: |
+        ./docusaurus/my-website/sidebars.js
+        ./docusaurus/my-website/docusaurus.config.js
+        ./docusaurus/my-website/docs
+        ./docusaurus/my-website/blog
+      pattern: single_dollar_brackets
+      fail_on_missing_env: true
+```
+
+### Inputs
 
 - `input_file`
     - Path to file with the placeholders to replace. If directory, will replace all files in the directory.
@@ -18,36 +42,30 @@
     - If true, will fail if a key required in the input file is missing in the environment.
     - default: `false`
 
-## Example usage
+## Development
+To compile the TypeScript source files after making changes:
 
-The `input_file`:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```json
-{
-  "foo": "${FOO_BAR_123}"
-}
-```
+2. Build the project:
+   ```bash
+   npm run build
+   ```
+   Or on Windows:
+   ```powershell
+   .\node_modules\.bin\ncc build --license licenses.txt --source-map -m -q src/main.ts -o lib
+   ```
 
-⚠️ no spaces around the key.
+3. Commit and push the changes:
+   ```bash
+   git add -A
+   git commit -m "Your commit message"
+   git push
+   ```
 
-The workflow:
+Note: The compiled JavaScript files in the `lib` folder must be committed to the repository for the action to work.
 
-```yaml
-name: whatever
-
-env:
-  FOO_BAR_123: 'literally whatever'
-```
-
-The result:
-
-```json
-{
-  "foo": "literally whatever"
-}
-```
-
-## License
-
-Licensed under MIT license.<br/>
-Please also see [licenses.txt](lib/licenses.txt)
+Note: This action is a fork of the [nightstory](https://github.com/nightstory/replace-env/tree/master) replace-env action.
