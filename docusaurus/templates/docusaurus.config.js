@@ -10,6 +10,7 @@ const siteName= process.env.SITE_NAME
 const projectName= process.env.PROJECT_NAME || siteName
 const baseUrl = process.env.BASE_URL || '/'
 const url = process.env.URL || 'https://www.kingtech.nl'
+const customCss = process.env.CUSTOMCSS
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -34,7 +35,7 @@ const config = {
         // ...
         
             theme: {
-            customCss: require.resolve('./static/css/custom.css'),
+            customCss: customCss ? require.resolve(customCss) : undefined,
             },
       },
     ],

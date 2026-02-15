@@ -31,6 +31,10 @@ inputs:
     description: Optionally specify a docusaurus sidebars file to use for the generated website. Default is to use the default sidebars file included in the action template.
     required: false
     default: ''
+  replaceEnv:
+    description: Whether to replace environment variables in the docusaurus config and sidebars files. Default is true, which allows to use environment variables in the config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
+    required: false
+    default: 'false'
   # KingTech template parameters
   siteName:
     description: The name of your site.
@@ -48,10 +52,10 @@ inputs:
     description: The base URL of the site, e.g. '/my-project/' if the site is hosted on a subpath. Default is '/'.
     required: false
     default: '/'
-  replaceEnv:
-    description: Whether to replace environment variables in the docusaurus config and sidebars files. Default is true, which allows to use environment variables in the config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
+  customCss:
+    description: Optionally specify a custom CSS file to use for the generated website. Default is '' (no custom CSS) in the docusaurus site folder, which can be used to customize the styling of the generated website.
     required: false
-    default: 'false'
+    default: '' #./static/css/custom.css
   # Docusaurus build parameters
   docusaurusVersion:
     description: Optionally a docusaurus version can be specified for the markdown. 
