@@ -10,7 +10,7 @@ const siteName= process.env.SITE_NAME
 const projectName= process.env.PROJECT_NAME || siteName
 const baseUrl = process.env.BASE_URL || '/'
 const url = process.env.URL || 'https://www.kingtech.nl'
-const customCss = process.env.CUSTOMCSS
+const customCss = process.env.CUSTOM_CSS
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
