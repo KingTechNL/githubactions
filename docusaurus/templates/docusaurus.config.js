@@ -34,9 +34,9 @@ const config = {
         blog: false, // Optional: disable the blog plugin
         // ...
         
-            theme: {
+        theme: {
             customCss: customCss ? require.resolve(customCss) : undefined,
-            },
+        },
       },
     ],
   ],
