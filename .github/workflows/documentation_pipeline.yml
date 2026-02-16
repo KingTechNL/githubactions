@@ -1,0 +1,49 @@
+name: .NET build pipeline
+
+# Triggers
+on:
+  push:
+    branches:
+      - main
+      - feature/docusaurus
+  pull_request:
+    branches:
+      - main
+
+#: Jobs to execute
+jobs:
+  ## Build DockerFileCopy image
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    ### Checkout repo
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    ### Generate version number
+    - name: Get version
+      id: get_version
+      uses: kingtechnl/githubactions/gitversion@main
+
+    ### Build docusaurus site
+    - name: Build docusaurus site
+      uses: kingtechnl/githubactions/docusaurus/build@feature/docusaurus
+      with:
+        sourceDir: '${{ github.workspace }}'
+        targetDir: '${{ github.workspace }}/_publish'
+        siteName: 'KingTech Actions'
+        baseUrl: '/'
+
+    ### Deploy to GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: kingtechnl/githubactions/deploy-pages@feature/docusaurus
+      with:
+        sourceDir: '${{ github.workspace }}/_publish'
+        targetBranch: 'gh-pages'
+        commitMessage: "Deploy site github actions"
+        userName: 'github-actions'
+        userEmail: 'github-actions@users.noreply.github.com'
+        token: ${{ secrets.DEPLOYMENT_TOKEN }}
+        url: 'actions.kingtech.nl'
+    
