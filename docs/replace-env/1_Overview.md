@@ -5,7 +5,7 @@ sidebar_position: 1
 ## replace-env action
 The `replace-env` action is used to replace environment variable placeholders in files with their actual values from the environment.
 
-For example, if your file contains ${FOO_BAR_123} and you have an environment variable FOO_BAR_123='literally whatever', the action will replace the placeholder with the actual value, resulting in literally whatever in the file.
+For example, if your file contains `${FOO_BAR_123}` and you have an environment variable `FOO_BAR_123='literally whatever'`, the action will replace the placeholder with the actual value, resulting in literally whatever in the file.
 
 Key features:
 - Works on single files or entire directories (recursively)
