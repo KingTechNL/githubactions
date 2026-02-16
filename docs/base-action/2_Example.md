@@ -1,5 +1,9 @@
+---
+sidebar_position: 2
+---
+
 # Example
-The `base-action` is used as follows:
+The `base-action` action is used as follows:
 
 ```
     - name: main action
