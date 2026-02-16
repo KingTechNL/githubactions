@@ -13,7 +13,7 @@ on:
 #: Jobs to execute
 jobs:
   ## Build DockerFileCopy image
-  build-and-deploy:
+  build-and-deploy-documentation:
     runs-on: ubuntu-latest
 
     steps:
