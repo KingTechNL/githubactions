@@ -31,6 +31,12 @@ inputs:
       empty the action will use `secrets.GITHUB_TOKEN` provided by the runner.
     required: false
     default: ''
+  url:
+    description: >-
+      (Optional) The URL to host the page on. If left empty, the default GitHub Pages URL will be used.
+      This is used to when your github pages site is hosted on a custom domain, so that the action can properly set the CNAME file.
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -45,6 +51,7 @@ runs:
         GIT_USER_EMAIL: ${{ inputs.userEmail }}
         REPO: ${{ github.repository }}
         TOKEN_INPUT: ${{ inputs.token }}
+        CUSTOM_URL: ${{ inputs.url }}
       run: |
         set -euo pipefail
 
@@ -65,6 +72,12 @@ runs:
         # Copy site files into temporary working directory
         shopt -s dotglob || true
         cp -a "${SOURCE_DIR}/." "${WORKDIR}/" || true
+
+        # Create CNAME file if custom URL is provided
+        if [ -n "${CUSTOM_URL}" ]; then
+          echo "Creating CNAME file with URL: ${CUSTOM_URL}"
+          echo "${CUSTOM_URL}" > "${WORKDIR}/CNAME"
+        fi
 
         cd "${WORKDIR}"
         git init
