@@ -1,13 +1,9 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-## Base action
-This is a collective action which combines the following actions:
-- `gitversion`
-- `dotnet-build-test`
-- `publish-nuget`
-- `publish-docker`
+## Dotnet build test action
+This action is used to build and test dotnet applications.
 
 ### Inputs
 
