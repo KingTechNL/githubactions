@@ -8,7 +8,7 @@ The `docusaurus/build` action is used as follows:
 ```
   - name: Build docusaurus site
     id: build_docusaurus
-    uses: kingtechnl/githubactions/docusaurus/build@main
+    uses: kingtechnl/githubactions/docusaurus-build@main
     with:
       sourceDir: 'docs' #Directory the source files are stored in.
       targetDir: 'build' #Directory the generated website will be stored in.

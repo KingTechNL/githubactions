@@ -19,7 +19,7 @@ jobs:
     ### Generate static website using docusaurus
     - name: Build docusaurus site
       id: build_docusaurus
-      uses: kingtechnl/githubactions/docusaurus/build@main
+      uses: kingtechnl/githubactions/docusaurus@main
       with:
         sourceDir: 'docs' #Directory the source files are stored in.
         targetDir: 'build' #Directory the generated website will be stored in.

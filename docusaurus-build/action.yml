@@ -60,6 +60,18 @@ inputs:
     description: Optionally specify a custom CSS file to use for the generated website. Default is '' (no custom CSS) in the docusaurus site folder, which can be used to customize the styling of the generated website.
     required: false
     default: '' #./static/css/custom.css
+  brand:
+    description: The brand name to use in the generated website. Default is 'KingTech'.
+    required: false
+    default: 'KingTech'
+  logo:
+    description: The logo file to use in the generated website. Default is '' (no logo).
+    required: false
+    default: ''
+  favicon:
+    description: The favicon file to use in the generated website. Default is '' (no favicon).
+    required: false
+    default: ''
   # Docusaurus build parameters
   docusaurusVersion:
     description: Optionally a docusaurus version can be specified for the markdown. 
@@ -197,7 +209,7 @@ runs:
         cp "${{ github.workspace }}/docusaurus.config.js" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
         echo "No config file specified, downloading default KingTech config file from GitHub"
-        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus/templates/docusaurus.config.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus-build/template/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
@@ -209,7 +221,7 @@ runs:
         cp "${{ github.workspace }}/sidebars.js" "./${{ env.SITE_NAME_URI }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
-        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus/templates/sidebars.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus-build/template/sidebars.js"
       fi
 
       ### Setting local environment variables.
@@ -223,6 +235,12 @@ runs:
       echo BASE_URL="$BASE_URL" >> $GITHUB_ENV
       export CUSTOM_CSS="${{ inputs.customCss }}"
       echo CUSTOM_CSS="$CUSTOM_CSS" >> $GITHUB_ENV
+      export BRAND="${{ inputs.brand }}"
+      echo BRAND="$BRAND" >> $GITHUB_ENV
+      export LOGO="${{ inputs.logo }}"
+      echo LOGO="$LOGO" >> $GITHUB_ENV
+      export FAVICON="${{ inputs.favicon }}"
+      echo FAVICON="$FAVICON" >> $GITHUB_ENV
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.

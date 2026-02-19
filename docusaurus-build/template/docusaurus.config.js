@@ -11,6 +11,9 @@ const projectName= process.env.PROJECT_NAME || siteName
 const baseUrl = process.env.BASE_URL || '/'
 const url = process.env.URL || 'https://www.kingtech.nl'
 const customCss = process.env.CUSTOM_CSS
+const brand = process.env.BRAND || 'KingTech'
+const logo = process.env.LOGO || 'img/logo.png'
+const favicon = process.env.FAVICON || 'img/favicon.png'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -20,8 +23,8 @@ const config = {
   baseUrl: baseUrl,
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.png',
-  organizationName: 'kingtech', // Usually your GitHub org/user name.
+  favicon: favicon,
+  organizationName: brand, // Usually your GitHub org/user name.
   projectName: projectName, // Usually your repo name.
   presets: [
     [
@@ -56,20 +59,20 @@ const config = {
       navbar: {
         title: siteName,
         logo: {
-          alt: 'KingTech Logo',
-          src: 'img/logo.png',
+          alt: `${brand} Logo`,
+          src: logo,
         },
         items: [
           {
             href: url,
-            label: 'KingTech',
+            label: brand,
             position: 'right',
           },
         ],
       },
       footer: {
         style: 'dark',
-        copyright: `Copyright © ${new Date().getFullYear()} KingTech.`,
+        copyright: `Copyright © ${new Date().getFullYear()} ${brand}.`,
       },
       prism: {
         theme: prismThemes.github,
