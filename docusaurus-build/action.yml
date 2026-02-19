@@ -25,7 +25,7 @@ inputs:
     default: ''
   targetDir:
     description: The directory to store the generated docusaurus website in. Default is ./publish .
-    required: true
+    required: false
     default: '${{ github.workspace }}/publish'
   configFile:
     description: Optionally specify a docusaurus config file to use for the generated website. Default is to use the default config file included in the action template.
@@ -61,9 +61,9 @@ inputs:
     required: false
     default: '' #./static/css/custom.css
   brand:
-    description: The brand name to use in the generated website. Default is 'KingTech'.
+    description: The brand name to use in the generated website. Default is ''.
     required: false
-    default: 'KingTech'
+    default: ''
   logo:
     description: The logo file to use in the generated website. Default is '' (no logo).
     required: false
