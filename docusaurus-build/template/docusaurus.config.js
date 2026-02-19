@@ -59,7 +59,7 @@ const config = {
       navbar: {
         title: siteName,
         logo: {
-          alt: `${brand} Logo`,
+          alt: `${ brand } Logo`,
           src: logo,
         },
         items: [
@@ -72,7 +72,7 @@ const config = {
       },
       footer: {
         style: 'dark',
-        copyright: `Copyright © ${new Date().getFullYear()} ${brand}.`,
+        copyright: `Copyright © ${new Date().getFullYear()} ${ brand }.`,
       },
       prism: {
         theme: prismThemes.github,

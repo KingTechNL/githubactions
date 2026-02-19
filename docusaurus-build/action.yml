@@ -95,6 +95,17 @@ inputs:
     required: false
     default: 'latest'
 
+env:
+  # Set environment variables from inputs
+  SITE_NAME: ${{ inputs.siteName }}
+  PROJECT_NAME: ${{ inputs.projectName }}
+  URL: ${{ inputs.url }}
+  BASE_URL: ${{ inputs.baseUrl }}
+  CUSTOM_CSS: ${{ inputs.customCss }}
+  BRAND: ${{ inputs.brand }}
+  LOGO: ${{ inputs.logo }}
+  FAVICON: ${{ inputs.favicon }}
+
 runs:
   using: "composite"
   steps:
@@ -225,22 +236,22 @@ runs:
       fi
 
       ### Setting local environment variables.
-      export SITE_NAME="${{ inputs.siteName }}"
-      echo SITE_NAME="$SITE_NAME" >> $GITHUB_ENV
-      export PROJECT_NAME="${{ inputs.projectName }}"
-      echo PROJECT_NAME="$PROJECT_NAME" >> $GITHUB_ENV
-      export URL="${{ inputs.url }}"
-      echo URL="$URL" >> $GITHUB_ENV
-      export BASE_URL="${{ inputs.baseUrl }}"
-      echo BASE_URL="$BASE_URL" >> $GITHUB_ENV
-      export CUSTOM_CSS="${{ inputs.customCss }}"
-      echo CUSTOM_CSS="$CUSTOM_CSS" >> $GITHUB_ENV
-      export BRAND="${{ inputs.brand }}"
-      echo BRAND="$BRAND" >> $GITHUB_ENV
-      export LOGO="${{ inputs.logo }}"
-      echo LOGO="$LOGO" >> $GITHUB_ENV
-      export FAVICON="${{ inputs.favicon }}"
-      echo FAVICON="$FAVICON" >> $GITHUB_ENV
+      #export SITE_NAME="${{ inputs.siteName }}"
+      #echo SITE_NAME="$SITE_NAME" >> $GITHUB_ENV
+      #export PROJECT_NAME="${{ inputs.projectName }}"
+      #echo PROJECT_NAME="$PROJECT_NAME" >> $GITHUB_ENV
+      #export URL="${{ inputs.url }}"
+      #echo URL="$URL" >> $GITHUB_ENV
+      #export BASE_URL="${{ inputs.baseUrl }}"
+      #echo BASE_URL="$BASE_URL" >> $GITHUB_ENV
+      #export CUSTOM_CSS="${{ inputs.customCss }}"
+      #echo CUSTOM_CSS="$CUSTOM_CSS" >> $GITHUB_ENV
+      #export BRAND="${{ inputs.brand }}"
+      #echo BRAND="$BRAND" >> $GITHUB_ENV
+      #export LOGO="${{ inputs.logo }}"
+      #echo LOGO="$LOGO" >> $GITHUB_ENV
+      #export FAVICON="${{ inputs.favicon }}"
+      #echo FAVICON="$FAVICON" >> $GITHUB_ENV
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
