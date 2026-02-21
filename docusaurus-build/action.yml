@@ -94,6 +94,10 @@ inputs:
     description: Optionally specify the node version to use, default is 'latest'.
     required: false
     default: 'latest'
+  kingtechActionsBranch:
+    description: The branch of the KingTech GitHub Actions repository to use for the default config and sidebars files. Default is 'main'.
+    required: false
+    default: 'main'
 
 runs:
   using: "composite"
@@ -209,7 +213,7 @@ runs:
         cp "${{ github.workspace }}/docusaurus.config.js" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
         echo "No config file specified, downloading default KingTech config file from GitHub"
-        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus-build/template/docusaurus.config.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/docusaurus.config.js"
       fi
 
       ### Sidebars files for docusaurus site.
@@ -221,7 +225,7 @@ runs:
         cp "${{ github.workspace }}/sidebars.js" "./${{ env.SITE_NAME_URI }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
-        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/feature/docusaurus/docusaurus-build/template/sidebars.js"
+        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/sidebars.js"
       fi
 
       ### Setting local environment variables.
@@ -246,7 +250,7 @@ runs:
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
   - name: replace-env
     if: inputs.replaceEnv == 'true'
-    uses: kingtechnl/githubactions/replace-env@feature/docusaurus
+    uses: kingtechnl/githubactions/replace-env@${{ inputs.kingtechActionsBranch }}
     with:
       input_file: |
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
@@ -256,7 +260,7 @@ runs:
       fail_on_missing_env: true
   - name: replace-env
     if: inputs.replaceEnv != 'true'
-    uses: kingtechnl/githubactions/replace-env@feature/docusaurus
+    uses: kingtechnl/githubactions/replace-env@${{ inputs.kingtechActionsBranch }}
     with:
       input_file: |
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js

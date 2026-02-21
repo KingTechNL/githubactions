@@ -36,6 +36,7 @@ jobs:
         brand: 'KingTech'
         logo: 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
         favicon: 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
+        kingtechActionsBranch: 'feature/docusaurus'
 
     ### Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
