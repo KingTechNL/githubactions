@@ -1,0 +1,96 @@
+# Static information for this action template
+# This composite action deploys a static website (e.g. blog) to GitHub Pages
+name: "deploy to github pages"
+description: "Deploy a static website (files from `sourceDir`) to a target branch for GitHub Pages"
+
+# Inputs (parameters) for this action
+inputs:
+  sourceDir:
+    description: The directory (relative to repo root) containing the static site files.
+    required: false
+    default: '.'
+  targetBranch:
+    description: The branch to deploy the website to (default is 'gh-pages').
+    required: false
+    default: 'gh-pages'
+  commitMessage:
+    description: The commit message to use for the deployment commit.
+    required: false
+    default: 'Deploy to GitHub Pages'
+  userName:
+    description: The name to use for the git commit author.
+    required: false
+    default: 'github-actions'
+  userEmail:
+    description: The email to use for the git commit author.
+    required: false
+    default: 'github-actions@users.noreply.github.com'
+  token:
+    description: >-
+      (Optional) Personal access token or other token with push rights. If left
+      empty the action will use `secrets.GITHUB_TOKEN` provided by the runner.
+    required: false
+    default: ''
+  url:
+    description: >-
+      (Optional) The URL to host the page on. If left empty, the default GitHub Pages URL will be used.
+      This is used to when your github pages site is hosted on a custom domain, so that the action can properly set the CNAME file.
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - name: Deploy to pages branch
+      shell: bash
+      env:
+        SOURCE_DIR: ${{ inputs.sourceDir }}
+        TARGET_BRANCH: ${{ inputs.targetBranch }}
+        COMMIT_MESSAGE: ${{ inputs.commitMessage }}
+        GIT_USER_NAME: ${{ inputs.userName }}
+        GIT_USER_EMAIL: ${{ inputs.userEmail }}
+        REPO: ${{ github.repository }}
+        TOKEN_INPUT: ${{ inputs.token }}
+        CUSTOM_URL: ${{ inputs.url }}
+      run: |
+        set -euo pipefail
+
+        if [ -z "${SOURCE_DIR}" ]; then SOURCE_DIR="."; fi
+        if [ ! -d "${SOURCE_DIR}" ]; then
+          echo "Source directory '${SOURCE_DIR}' does not exist"
+          exit 1
+        fi
+
+        TOKEN="${TOKEN_INPUT}"
+        if [ -z "${TOKEN}" ]; then
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+        fi
+
+        WORKDIR=$(mktemp -d)
+        echo "Preparing deploy in ${WORKDIR}"
+
+        # Copy site files into temporary working directory
+        shopt -s dotglob || true
+        cp -a "${SOURCE_DIR}/." "${WORKDIR}/" || true
+
+        # Create CNAME file if custom URL is provided
+        if [ -n "${CUSTOM_URL}" ]; then
+          echo "Creating CNAME file with URL: ${CUSTOM_URL}"
+          echo "${CUSTOM_URL}" > "${WORKDIR}/CNAME"
+        fi
+
+        cd "${WORKDIR}"
+        git init
+        git config user.name "${GIT_USER_NAME}"
+        git config user.email "${GIT_USER_EMAIL}"
+        git add -A
+
+        if git diff --cached --quiet; then
+          echo "No changes to deploy"
+          exit 0
+        fi
+
+        git commit -m "${COMMIT_MESSAGE}"
+
+        # Push to target branch (force update)
+        git push --force "https://x-access-token:${TOKEN}@github.com/${REPO}.git" HEAD:refs/heads/${TARGET_BRANCH}

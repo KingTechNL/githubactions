@@ -1,0 +1,284 @@
+# Static information for this action template
+# Source: https://github.com/GitTools/actions
+# Note: Make sure the checkout action is called with:  fetch-depth: 0
+# This action builds a static website from markdown using docusaurus. See: https://docusaurus.io/
+name: "Build docusaurus site"
+description: "Build a static website (e.g. blog) using Docusaurus"
+
+# Inputs (parameters) for this action
+inputs:
+  docsDir:
+    description: The directory where the docusaurus docs are stored in the generated website, default is 'docs'.
+    required: false
+    default: ''
+  blogDir:
+    description: The directory where the docusaurus blog files are stored in the generated website, default is 'blog'.
+    required: false
+    default: ''
+  srcDir:
+    description: The directory where the docusaurus src files are stored in the generated website, default is 'src'.
+    required: false
+    default: ''
+  staticDir:
+    description: The directory where the docusaurus static files are stored in the generated website, default is 'static'.
+    required: false
+    default: ''
+  targetDir:
+    description: The directory to store the generated docusaurus website in. Default is ./publish .
+    required: false
+    default: '${{ github.workspace }}/publish'
+  configFile:
+    description: Optionally specify a docusaurus config file to use for the generated website. Default is to use the default config file included in the action template.
+    required: false
+    default: ''
+  sideBarsFile:
+    description: Optionally specify a docusaurus sidebars file to use for the generated website. Default is to use the default sidebars file included in the action template.
+    required: false
+    default: ''
+  replaceEnv:
+    description: Whether to replace environment variables in the docusaurus config and sidebars files. Default is true, which allows to use environment variables in the config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
+    required: false
+    default: 'false'
+  # KingTech template parameters
+  siteName:
+    description: The name of your site.
+    required: false
+    default: 'my-website'
+  projectName:
+    description: The name of your project, used for example in the navbar. Default is the same as siteName.
+    required: false
+    default: ''
+  url:
+    description: The URL of the site, e.g. 'https://www.my-site.com'. Default is 'https://www.kingtech.nl'.
+    required: false
+    default: 'https://www.kingtech.nl'
+  baseUrl:
+    description: The base URL of the site, e.g. '/my-project/' if the site is hosted on a subpath. Default is '/'.
+    required: false
+    default: '/'
+  customCss:
+    description: Optionally specify a custom CSS file to use for the generated website. Default is '' (no custom CSS) in the docusaurus site folder, which can be used to customize the styling of the generated website.
+    required: false
+    default: '' #./static/css/custom.css
+  brand:
+    description: The brand name to use in the generated website. Default is ''.
+    required: false
+    default: ''
+  logo:
+    description: The logo file to use in the generated website. Default is '' (no logo).
+    required: false
+    default: ''
+  favicon:
+    description: The favicon file to use in the generated website. Default is '' (no favicon).
+    required: false
+    default: ''
+  # Docusaurus build parameters
+  docusaurusVersion:
+    description: Optionally a docusaurus version can be specified for the markdown. 
+    required: false
+    default: 'latest'
+  docusaurusVariant:
+    description: The docusaurus template variant to use (javascript or typescript), default is javascript.
+    required: false
+    default: 'javascript'
+  docusaurusTemplate:
+    description: The docusaurus template to use, default is 'classic'.
+    required: false
+    default: 'classic'
+  # Dependencies
+  npmCache:
+    description: Optionally specify the npm cache directory to speed up npm install.
+    required: false
+    default: ''
+  nodeVersion:
+    description: Optionally specify the node version to use, default is 'latest'.
+    required: false
+    default: 'latest'
+  kingtechActionsBranch:
+    description: The branch of the KingTech GitHub Actions repository to use for the default config and sidebars files. Default is 'main'.
+    required: false
+    default: 'main'
+
+runs:
+  using: "composite"
+  steps:
+
+  # Move to docusaurus action directory
+  - name: Make sure docusaurus path exists
+    shell: bash
+    run: |
+      export ORIGINAL_DIR=$(pwd)
+      echo "ORIGINAL_DIR=$ORIGINAL_DIR" >> $GITHUB_ENV
+      echo "stored original dir $ORIGINAL_DIR for later use"
+
+      export SITE_NAME_URI=$(echo "${{ inputs.siteName }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+      echo "SITE_NAME_URI=$SITE_NAME_URI" >> $GITHUB_ENV
+      echo "converted siteName '${{ inputs.siteName }}' to URI-safe format: $SITE_NAME_URI"
+
+      echo "creating docusaurus action path: ${{ github.action_path }}/docusaurus"
+      mkdir -p "${{ github.action_path }}/docusaurus"
+
+  # Install node.js
+  - name: Setup node.js from cache
+    uses: actions/setup-node@v6
+    if: ${{ inputs.npmCache != '' }}
+    with:
+      node-version: '${{ inputs.nodeVersion }}'
+      cache: 'npm'
+      cache-dependency-path: "${{ inputs.npmCache }}"
+  - name: Setup node.js without cache
+    uses: actions/setup-node@v6
+    if: ${{ inputs.npmCache == '' }}
+    with:
+      node-version: '${{ inputs.nodeVersion }}'
+
+  # Create basic docusaurus site
+  - name: Setup docusaurus site
+    shell: bash
+    working-directory: ${{ github.action_path }}/docusaurus
+    run: |
+      ### Install docusaurus.
+      npm install create-docusaurus@3.9.2
+      ### Setup docusaurus site (base).
+      echo 'building docusaurus site'
+      npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ env.SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
+
+  # Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
+  - name: Customize docusaurus site
+    shell: bash
+    working-directory: ${{ github.action_path }}/docusaurus
+    run: |    
+      ### Customize docusaurus site by copying files from the specified input directories (staticDir, docsDir, blogDir, srcDir) to the docusaurus site folder. If the input directories are not specified, it will look for the default folders in the github workspace (e.g. ./static, ./docs, ./blog) and copy them if they exist. If the input directories are specified as '-', it will keep the default content of the docusaurus site for that type of content (e.g. if staticDir is '-', it will keep the default static folder of the docusaurus site). This allows to easily customize the content of the generated website by providing the desired content in the github repository or by specifying custom directories for each type of content.
+      echo "Removing build folder"
+      rm -rf "${{ env.SITE_NAME_URI }}/build"
+
+      ### Docs files for docusaurus site.
+      if [ "${{ inputs.docsDir }}" != '-' ]; then
+        echo "Removing default docs folder"
+        rm -rf "${{ env.SITE_NAME_URI }}/docs"
+      fi
+      if [ "${{ inputs.docsDir }}" != '' ] && [ "${{ inputs.docsDir }}" != '-' ]; then
+        echo "Copying docs folder from ${{ inputs.docsDir }}"
+        cp -a "${{ inputs.docsDir }}/" "./${{ env.SITE_NAME_URI }}/docs/"
+      elif [ -d "${{ github.workspace }}/docs" ]; then
+        echo "Copying docs folder from ${{ github.workspace }}/docs"
+        cp -a "${{ github.workspace }}/docs/." "./${{ env.SITE_NAME_URI }}/docs/"
+      fi
+
+      ### Blog files for docusaurus site.
+      if [ "${{ inputs.blogDir }}" != '-' ]; then
+        echo "Removing default blog folder"
+        rm -rf "${{ env.SITE_NAME_URI }}/blog"
+      fi
+      if [ "${{ inputs.blogDir }}" != '' ] && [ "${{ inputs.blogDir }}" != '-' ]; then
+        echo "Copying blog folder from ${{ inputs.blogDir }}"
+        cp -a "${{ inputs.blogDir }}/" "./${{ env.SITE_NAME_URI }}/blog/"
+      elif [ -d "${{ github.workspace }}/blog" ]; then
+        echo "Copying blog folder from ${{ github.workspace }}/blog"
+        cp -a "${{ github.workspace }}/blog/." "./${{ env.SITE_NAME_URI }}/blog/"
+      fi
+
+      ### Src files for docusaurus site.
+      if [ "${{ inputs.srcDir }}" != '-' ]; then
+        echo "Removing default src folder"
+        rm -rf "${{ env.SITE_NAME_URI }}/src"
+      fi
+      if [ "${{ inputs.srcDir }}" != '' ] && [ "${{ inputs.srcDir }}" != '-' ]; then
+        echo "Copying src folder from ${{ inputs.srcDir }}"
+        cp -a "${{ inputs.srcDir }}/" "./${{ env.SITE_NAME_URI }}/src/"
+      elif [ -d "${{ github.workspace }}/src" ]; then
+        echo "Copying src folder from ${{ github.workspace }}/src"
+        cp -a "${{ github.workspace }}/src/." "./${{ env.SITE_NAME_URI }}/src/"
+      fi
+
+      ### Static files for docusaurus site.
+      if [ "${{ inputs.staticDir }}" != '-' ]; then
+        echo "Removing default static folder"
+        rm -rf "${{ env.SITE_NAME_URI }}/static"
+      fi
+      if [ "${{ inputs.staticDir }}" != '' ] && [ "${{ inputs.staticDir }}" != '-' ]; then
+        echo "Copying static folder from ${{ inputs.staticDir }}"
+        cp -a "${{ inputs.staticDir }}/" "./${{ env.SITE_NAME_URI }}/static/"
+      elif [ -d "${{ github.workspace }}/static" ]; then
+        echo "Copying static folder from ${{ github.workspace }}/static"
+        cp -a "${{ github.workspace }}/static/." "./${{ env.SITE_NAME_URI }}/static/"
+      fi
+
+      ### Config files for docusaurus site.
+      if [ "${{ inputs.configFile }}" != '' ] && [ "${{ inputs.configFile }}" != '-' ]; then
+        echo "Copying config file from ${{ inputs.configFile }}"
+        cp "${{ inputs.configFile }}" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
+      elif [ -f "${{ github.workspace }}/docusaurus.config.js" ]; then
+        echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
+        cp "${{ github.workspace }}/docusaurus.config.js" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
+      elif [ "${{ inputs.configFile }}" == '' ]; then
+        echo "No config file specified, downloading default KingTech config file from GitHub"
+        wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/docusaurus.config.js"
+      fi
+
+      ### Sidebars files for docusaurus site.
+      if [ "${{ inputs.sideBarsFile }}" != '' ] && [ "${{ inputs.sideBarsFile }}" != '-' ]; then
+        echo "Copying sidebars file from ${{ inputs.sideBarsFile }}"
+        cp "${{ inputs.sideBarsFile }}" "./${{ env.SITE_NAME_URI }}/sidebars.js"
+      elif [ -f "${{ github.workspace }}/sidebars.js" ]; then
+        echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
+        cp "${{ github.workspace }}/sidebars.js" "./${{ env.SITE_NAME_URI }}/sidebars.js"
+      elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
+        echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
+        wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/sidebars.js"
+      fi
+
+      ### Setting local environment variables.
+      export SITE_NAME="${{ inputs.siteName }}"
+      echo SITE_NAME="$SITE_NAME" >> $GITHUB_ENV
+      export PROJECT_NAME="${{ inputs.projectName }}"
+      echo PROJECT_NAME="$PROJECT_NAME" >> $GITHUB_ENV
+      export URL="${{ inputs.url }}"
+      echo URL="$URL" >> $GITHUB_ENV
+      export BASE_URL="${{ inputs.baseUrl }}"
+      echo BASE_URL="$BASE_URL" >> $GITHUB_ENV
+      export CUSTOM_CSS="${{ inputs.customCss }}"
+      echo CUSTOM_CSS="$CUSTOM_CSS" >> $GITHUB_ENV
+      export BRAND="${{ inputs.brand }}"
+      echo BRAND="$BRAND" >> $GITHUB_ENV
+      export LOGO="${{ inputs.logo }}"
+      echo LOGO="$LOGO" >> $GITHUB_ENV
+      export FAVICON="${{ inputs.favicon }}"
+      echo FAVICON="$FAVICON" >> $GITHUB_ENV
+
+  # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
+  # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
+  - name: replace-env
+    if: inputs.replaceEnv == 'true'
+    uses: kingtechnl/githubactions/replace-env@main
+    with:
+      input_file: |
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docs
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/blog
+      fail_on_missing_env: true
+  - name: replace-env
+    if: inputs.replaceEnv != 'true'
+    uses: kingtechnl/githubactions/replace-env@main
+    with:
+      input_file: |
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
+        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
+      fail_on_missing_env: true
+
+  # Install docusaurus dependencies and build the site
+  - name: Build docusaurus site
+    shell: bash
+    working-directory: ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}
+    run: |      
+      ### Build docusaurus site.
+      echo "Building docusaurus site"
+      npm run build
+
+  # Store output in target directory
+  - name: Store output in target directory
+    shell: bash
+    run: |      
+      echo "Storing output in target directory: ${{ inputs.targetDir }}"
+      cp -r "${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/build" "${{ inputs.targetDir }}/"
