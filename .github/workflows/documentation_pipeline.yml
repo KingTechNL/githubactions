@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - feature/docusaurus
   pull_request:
     branches:
       - main
@@ -28,7 +27,7 @@ jobs:
 
     ### Build docusaurus site
     - name: Build docusaurus site
-      uses: kingtechnl/githubactions/docusaurus-build@feature/docusaurus
+      uses: kingtechnl/githubactions/docusaurus-build@main
       with:
         targetDir: '${{ github.workspace }}/_publish'
         siteName: 'KingTech Actions'
@@ -39,7 +38,7 @@ jobs:
 
     ### Deploy to GitHub Pages
     - name: Deploy to GitHub Pages
-      uses: kingtechnl/githubactions/deploy-pages@feature/docusaurus
+      uses: kingtechnl/githubactions/deploy-pages@main
       with:
         sourceDir: '${{ github.workspace }}/_publish'
         targetBranch: 'gh-pages'
