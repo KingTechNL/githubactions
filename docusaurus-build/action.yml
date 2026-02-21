@@ -250,7 +250,7 @@ runs:
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
   - name: replace-env
     if: inputs.replaceEnv == 'true'
-    uses: kingtechnl/githubactions/replace-env@${{ inputs.kingtechActionsBranch }}
+    uses: kingtechnl/githubactions/replace-env@main
     with:
       input_file: |
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
@@ -260,7 +260,7 @@ runs:
       fail_on_missing_env: true
   - name: replace-env
     if: inputs.replaceEnv != 'true'
-    uses: kingtechnl/githubactions/replace-env@${{ inputs.kingtechActionsBranch }}
+    uses: kingtechnl/githubactions/replace-env@main
     with:
       input_file: |
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
