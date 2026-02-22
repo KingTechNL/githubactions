@@ -271,7 +271,7 @@ runs:
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/blog
       fail_on_missing_env: true
   - name: replace-env
-    if: inputs.replaceEnv != 'true'
+    if: inputs.replaceEnv != 'true' && inputs.configFile == '' && inputs.sideBarsFile == ''
     uses: kingtechnl/githubactions/replace-env@main
     with:
       input_file: |
