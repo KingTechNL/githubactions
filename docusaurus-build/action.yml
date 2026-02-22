@@ -86,6 +86,10 @@ inputs:
     required: false
     default: 'classic'
   # Dependencies
+  packages:
+    description: Optionally specify additional npm packages to install in the docusaurus action before building the site, for example to include additional docusaurus plugins or themes. Default is '' (no additional packages).
+    required: false
+    default: ''
   npmCache:
     description: Optionally specify the npm cache directory to speed up npm install.
     required: false
@@ -142,6 +146,14 @@ runs:
       ### Setup docusaurus site (base).
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ env.SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
+
+  - name: Install additional npm packages
+    if: inputs.packages != ''
+    shell: bash
+    working-directory: ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}
+    run: |
+      echo "Installing additional npm packages: ${{ inputs.packages }}"
+      npm install ${{ inputs.packages }}
 
   # Remove default docusaurus content (e.g. blog, docs, static) to prevent it from being included in the generated website.
   - name: Customize docusaurus site
