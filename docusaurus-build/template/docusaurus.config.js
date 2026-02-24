@@ -4,16 +4,97 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+const {themes: prismThemes} = require('prism-react-renderer');
+const fs = require('fs');
+const path = require('path');
 
-const siteName= process.env.SITE_NAME
+// Convert folder names to human-readable labels
+function humanize(str) {
+  return str
+    // Remove numeric prefixes
+    .replace(/^\d+_/, '')
+    // Split on capital letters, underscores, and hyphens
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]/g, ' ')
+    // Capitalize first letter of each word
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+// Dynamically generate navbar items from docs folder structure
+function getDocsNavbarItems() {
+  const docsPath = path.join(__dirname, 'docs');
+  const items = [];
+  
+  try {
+    const entries = fs.readdirSync(docsPath, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      if (entry.isDirectory() && !entry.name.startsWith('.')) {
+        // Extract number prefix and name (prefix is optional)
+        const match = entry.name.match(/^(\d+)_(.+)$/);
+        const sidebarId = entry.name.replace(/^\d+_/, '');
+        const label = humanize(match ? match[2] : entry.name);
+        const sortOrder = match ? parseInt(match[1], 10) : 999; // No prefix = sort last
+        
+        // Count markdown files in the directory
+        const dirPath = path.join(docsPath, entry.name);
+        const files = fs.readdirSync(dirPath, { withFileTypes: true });
+        const mdFiles = files.filter(f => 
+          f.isFile() && (f.name.endsWith('.md') || f.name.endsWith('.mdx'))
+        );
+        
+        // Use docSidebar for multiple files, doc link for single file
+        if (mdFiles.length > 1) {
+          console.log(`Navbar item: ${entry.name} -> docSidebar: ${sidebarId}, label: ${label}`);
+          items.push({
+            type: 'docSidebar',
+            sidebarId: sidebarId,
+            position: 'left',
+            label: label,
+            sortOrder: sortOrder,
+          });
+        } else if (mdFiles.length === 1) {
+          // Link directly to the single document (strip numeric prefixes)
+          const folderName = entry.name.replace(/^\d+_/, '');
+          const fileName = mdFiles[0].name.replace(/\.mdx?$/, '').replace(/^\d+_/, '');
+          const docId = `${folderName}/${fileName}`;
+          console.log(`Navbar item: ${entry.name} -> doc: ${docId}, label: ${label}`);
+          items.push({
+            type: 'doc',
+            docId: docId,
+            position: 'left',
+            label: label,
+            sortOrder: sortOrder,
+          });
+        }
+      }
+    }
+    
+    // Sort by numeric prefix (folders without prefix go last)
+    items.sort((a, b) => a.sortOrder - b.sortOrder);
+    
+    // Remove sortOrder property before returning (not needed in final config)
+    items.forEach(item => delete item.sortOrder);
+    
+    console.log('Navbar items generated:', items.map(i => i.sidebarId || i.docId));
+  } catch (error) {
+    console.warn('Could not read docs directory:', error);
+  }
+  
+  return items;
+}
+
+const siteName= process.env.SITE_NAME || 'GGV Blogs'
 const projectName= process.env.PROJECT_NAME || siteName
 const baseUrl = process.env.BASE_URL || '/'
 const url = process.env.URL || 'https://www.kingtech.nl'
 const customCss = process.env.CUSTOM_CSS
 const brand = process.env.BRAND || 'KingTech'
-const logo = process.env.LOGO || 'img/logo.png'
-const favicon = process.env.FAVICON || 'img/favicon.png'
+const logo = process.env.LOGO || 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
+const favicon = process.env.FAVICON || 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
+const navbarAsRoot = process.env.NAVBAR_AS_ROOT === 'true'; // Default: false unless explicitly set to 'true'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -38,7 +119,8 @@ const config = {
         // ...
         
         theme: {
-            customCss: customCss ? require.resolve(customCss) : undefined,
+            //customCss: customCss ? require.resolve(customCss) : undefined,
+            customCss: require.resolve('./static/custom-css.css'),
         },
       },
     ],
@@ -63,6 +145,14 @@ const config = {
           src: logo,
         },
         items: [
+          ...(navbarAsRoot ? getDocsNavbarItems() : [
+            {
+              type: 'docSidebar',
+              sidebarId: 'tutorialSidebar',
+              position: 'left',
+              label: 'Docs',
+            },
+          ]),
           {
             href: url,
             label: brand,
