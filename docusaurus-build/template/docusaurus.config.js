@@ -130,8 +130,7 @@ const config = {
         // ...
         
         theme: {
-            //customCss: customCss ? require.resolve(customCss) : undefined,
-            customCss: require.resolve('./static/custom-css.css'),
+            customCss: customCss ? require.resolve(customCss) : undefined,
         },
       },
     ],
