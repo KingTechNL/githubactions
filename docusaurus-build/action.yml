@@ -72,6 +72,10 @@ inputs:
     description: The favicon file to use in the generated website. Default is '' (no favicon).
     required: false
     default: ''
+  NavbarFromRootDir:
+    description: If set to true, the files and directories in the 'docs' root directory will be used to generate the navbar items in the docusaurus site. This allows to easily generate a navbar based on the structure of the 'docs' folder in the github repository. Default is false, which means that the navbar will be generated based on the default docusaurus config and sidebars files.
+    required: false
+    default: 'false'
   # Docusaurus build parameters
   docusaurusVersion:
     description: Optionally a docusaurus version can be specified for the markdown. 
@@ -257,26 +261,18 @@ runs:
       echo LOGO="$LOGO" >> $GITHUB_ENV
       export FAVICON="${{ inputs.favicon }}"
       echo FAVICON="$FAVICON" >> $GITHUB_ENV
+      export NAVBAR_AS_ROOT="${{ inputs.NavbarFromRootDir }}"
+      echo NAVBAR_AS_ROOT="$NAVBAR_AS_ROOT" >> $GITHUB_ENV
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
-  - name: replace-env
+  - name: replace env files in docs and blogs
     if: inputs.replaceEnv == 'true'
     uses: kingtechnl/githubactions/replace-env@main
     with:
       input_file: |
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docs
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/blog
-      fail_on_missing_env: true
-  - name: replace-env
-    if: inputs.replaceEnv != 'true' && inputs.configFile == '' && inputs.sideBarsFile == ''
-    uses: kingtechnl/githubactions/replace-env@main
-    with:
-      input_file: |
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
       fail_on_missing_env: true
 
   # Install docusaurus dependencies and build the site
