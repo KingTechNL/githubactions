@@ -266,23 +266,13 @@ runs:
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
-  - name: replace-env
+  - name: replace env files in docs and blogs
     if: inputs.replaceEnv == 'true'
     uses: kingtechnl/githubactions/replace-env@main
     with:
       input_file: |
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docs
         ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/blog
-      fail_on_missing_env: true
-  - name: replace-env
-    if: inputs.replaceEnv != 'true' && inputs.configFile == '' && inputs.sideBarsFile == ''
-    uses: kingtechnl/githubactions/replace-env@main
-    with:
-      input_file: |
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/sidebars.js
-        ${{ github.action_path }}/docusaurus/${{ env.SITE_NAME_URI }}/docusaurus.config.js
       fail_on_missing_env: true
 
   # Install docusaurus dependencies and build the site
