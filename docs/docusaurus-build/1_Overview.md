@@ -48,6 +48,7 @@ This template is relatively vanilla and can be configured to your needs. If the 
 | `brand` | No | '' | The brand name to display in the generated website. |
 | `logo` | No | '' | Path to the logo image file to use in the website header. |
 | `favicon` | No | '' | Path to the favicon icon file. |
+| `NavbarFromRootDir` | No | '' | If set to true, the files and directories in the 'docs' root directory will be used to generate the navbar items in the docusaurus site. |
 
 #### Custom docusaurus
 In case you don't want to use the KingTech Docusaurus templates, it is possible to pass your own config and sidebars files.
