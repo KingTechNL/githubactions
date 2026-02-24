@@ -96,6 +96,17 @@ const logo = process.env.LOGO || 'https://www.gravatar.com/avatar/1c367716e9c649
 const favicon = process.env.FAVICON || 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
 const navbarAsRoot = process.env.NAVBAR_AS_ROOT === 'true'; // Default: false unless explicitly set to 'true'
 
+console.log('Docusaurus config values:');
+console.log(`SITE_NAME: ${siteName}`);
+console.log(`PROJECT_NAME: ${projectName}`);
+console.log(`BASE_URL: ${baseUrl}`);
+console.log(`URL: ${url}`);
+console.log(`CUSTOM_CSS: ${customCss}`);
+console.log(`BRAND: ${brand}`);
+console.log(`LOGO: ${logo}`);
+console.log(`FAVICON: ${favicon}`);
+console.log(`NAVBAR_AS_ROOT: ${navbarAsRoot}`);
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: siteName,
