@@ -199,6 +199,33 @@ jobs:
         targetDir: './build'
 ```
 
+## With Translation Support (i18n)
+Example using a custom translation folder and default locale:
+
+```yaml
+name: Build Documentation
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build multilingual documentation site
+      uses: KingTech/KingTech.GithubActions/docusaurus-build@main
+      with:
+        siteName: 'my-docs'
+        DefaultLanguage: 'nl'
+        TranslationsDir: './i18n'
+        targetDir: './build'
+```
+
+This copies your translation files into Docusaurus `i18n` and sets the default locale for the generated site.
+
 ## What Happens
 When this action runs, it will:
 1. Install Node.js and required dependencies

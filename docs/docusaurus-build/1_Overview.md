@@ -49,6 +49,16 @@ This template is relatively vanilla and can be configured to your needs. If the 
 | `logo` | No | '' | Path to the logo image file to use in the website header. |
 | `favicon` | No | '' | Path to the favicon icon file. |
 | `NavbarFromRootDir` | No | '' | If set to true, the files and directories in the 'docs' root directory will be used to generate the navbar items in the docusaurus site. |
+| `DefaultLanguage` | No | 'en' | The default locale/language of the generated Docusaurus site. |
+| `TranslationsDir` | No | '' | Directory that contains your Docusaurus `i18n` translation files. If empty, the action will use `i18n/` from the workspace when present. The '-' wild card can be used to keep the default generated `i18n` folder. |
+
+#### Translation support
+The action supports Docusaurus internationalization (i18n) out of the box:
+
+- Set `DefaultLanguage` to the default locale for your site (for example `en` or `nl`).
+- Use `TranslationsDir` to copy your own `i18n` folder into the generated Docusaurus site.
+- If `TranslationsDir` is not provided, the action automatically uses `./i18n` from your repository when it exists.
+- Set `TranslationsDir` to `-` to keep the default generated Docusaurus `i18n` content.
 
 #### Custom docusaurus
 In case you don't want to use the KingTech Docusaurus templates, it is possible to pass your own config and sidebars files.

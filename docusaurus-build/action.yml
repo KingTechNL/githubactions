@@ -76,6 +76,14 @@ inputs:
     description: If set to true, the files and directories in the 'docs' root directory will be used to generate the navbar items in the docusaurus site. This allows to easily generate a navbar based on the structure of the 'docs' folder in the github repository. Default is false, which means that the navbar will be generated based on the default docusaurus config and sidebars files.
     required: false
     default: 'false'
+  DefaultLanguage:
+    description: The default language for the docusaurus site, default is 'en'.
+    required: false
+    default: 'en'
+  TranslationsDir:
+    description: Optionally specify a directory where the docusaurus translation files are stored in the generated website, default is 'i18n'.
+    required: false
+    default: ''
   # Docusaurus build parameters
   docusaurusVersion:
     description: Optionally a docusaurus version can be specified for the markdown. 
@@ -220,6 +228,19 @@ runs:
         cp -a "${{ github.workspace }}/static/." "./${{ env.SITE_NAME_URI }}/static/"
       fi
 
+      ### Translations files for docusaurus site.
+      if [ "${{ inputs.translationsDir }}" != '-' ]; then
+        echo "Removing default translations folder"
+        rm -rf "${{ env.SITE_NAME_URI }}/i18n"
+      fi
+      if [ "${{ inputs.translationsDir }}" != '' ] && [ "${{ inputs.translationsDir }}" != '-' ]; then
+        echo "Copying translations folder from ${{ inputs.translationsDir }}"
+        cp -a "${{ inputs.translationsDir }}/" "./${{ env.SITE_NAME_URI }}/i18n/"
+      elif [ -d "${{ github.workspace }}/i18n" ]; then
+        echo "Copying translations folder from ${{ github.workspace }}/i18n"
+        cp -a "${{ github.workspace }}/i18n/." "./${{ env.SITE_NAME_URI }}/i18n/"
+      fi
+
       ### Config files for docusaurus site.
       if [ "${{ inputs.configFile }}" != '' ] && [ "${{ inputs.configFile }}" != '-' ]; then
         echo "Copying config file from ${{ inputs.configFile }}"
@@ -228,7 +249,7 @@ runs:
         echo "Copying config file from ${GITHUB_WORKSPACE}/docusaurus.config.js"
         cp "${{ github.workspace }}/docusaurus.config.js" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
       elif [ "${{ inputs.configFile }}" == '' ]; then
-        echo "No config file specified, downloading default KingTech config file from GitHub"
+        echo "No config file specified, downloading default KingTech config file from GitHub branch ${{ inputs.kingtechActionsBranch }}"
         wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/docusaurus.config.js"
       fi
 
@@ -240,7 +261,7 @@ runs:
         echo "Copying sidebars file from ${GITHUB_WORKSPACE}/sidebars.js"
         cp "${{ github.workspace }}/sidebars.js" "./${{ env.SITE_NAME_URI }}/sidebars.js"
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
-        echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub"
+        echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub branch ${{ inputs.kingtechActionsBranch }}"
         wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/sidebars.js"
       fi
 
@@ -263,6 +284,8 @@ runs:
       echo FAVICON="$FAVICON" >> $GITHUB_ENV
       export NAVBAR_AS_ROOT="${{ inputs.NavbarFromRootDir }}"
       echo NAVBAR_AS_ROOT="$NAVBAR_AS_ROOT" >> $GITHUB_ENV
+      export TRANSLATIONS_DEFAULT="${{ inputs.DefaultLanguage }}"
+      echo TRANSLATIONS_DEFAULT="$TRANSLATIONS_DEFAULT" >> $GITHUB_ENV
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
