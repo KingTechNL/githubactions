@@ -86,6 +86,22 @@ function getDocsNavbarItems() {
   return items;
 }
 
+// Read translation folder names from the specified path
+function getTranslationFolderNames(translationsPath) {
+  try {
+    const fullTranslationsPath = path.join(__dirname, translationsPath);
+    if (!fs.existsSync(fullTranslationsPath)) return [];
+
+    const entries = fs.readdirSync(fullTranslationsPath, {withFileTypes: true});
+    return entries
+      .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
+      .map(entry => entry.name);
+  } catch {
+    return [];
+  }
+}
+
+// Load configuration from environment variables with defaults
 const siteName= process.env.SITE_NAME || 'GGV Blogs'
 const projectName= process.env.PROJECT_NAME || siteName
 const baseUrl = process.env.BASE_URL || '/'
@@ -95,18 +111,25 @@ const brand = process.env.BRAND || 'KingTech'
 const logo = process.env.LOGO || 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
 const favicon = process.env.FAVICON || 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
 const navbarAsRoot = process.env.NAVBAR_AS_ROOT === 'true'; // Default: false unless explicitly set to 'true'
+const translationsDefault = process.env.TRANSLATIONS_DEFAULT || 'en';
+const translationsPath = process.env.TRANSLATIONS_PATH || 'i18n'; //TODO: I dont think we can change this path, as docusaurus expects the translations to be in the i18n folder in the root of the docusaurus site.
 
-console.log('Docusaurus config values:');
-console.log(`SITE_NAME: ${siteName}`);
-console.log(`PROJECT_NAME: ${projectName}`);
-console.log(`BASE_URL: ${baseUrl}`);
-console.log(`URL: ${url}`);
-console.log(`CUSTOM_CSS: ${customCss}`);
-console.log(`BRAND: ${brand}`);
-console.log(`LOGO: ${logo}`);
-console.log(`FAVICON: ${favicon}`);
-console.log(`NAVBAR_AS_ROOT: ${navbarAsRoot}`);
+// Read translation folders to configure i18n locales
+const translationFolderNames = getTranslationFolderNames(translationsPath);
+const translationLocaleConfigs = Object.fromEntries(
+  translationFolderNames.map(locale => [
+    locale,
+    {label: locale.length === 2 ? locale.toUpperCase() : locale},
+  ])
+);
+const hasTranslations = translationFolderNames.length > 0;
+if (hasTranslations) {
+  console.log(`Translations folders found in ${translationsPath}: ${translationFolderNames.join(', ')}. i18n enabled.`);
+} else {
+  console.warn(`No translation folders found in ${translationsPath}. i18n disabled.`);
+}
 
+// Docusaurus configuration object
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: siteName,
@@ -155,6 +178,7 @@ const config = {
           src: logo,
         },
         items: [
+          // If using navbar as root, generate items from docs folder structure; otherwise use default sidebar
           ...(navbarAsRoot ? getDocsNavbarItems() : [
             {
               type: 'docSidebar',
@@ -163,11 +187,17 @@ const config = {
               label: 'Docs',
             },
           ]),
-          {
+          // Add language dropdown to the right of the navbar when translations exist
+          ...(hasTranslations ? [{
+            type: 'localeDropdown',
+            position: 'right',
+          }] : []),
+          // External link to the right of the navbar
+          ...(url ? [{
             href: url,
             label: brand,
             position: 'right',
-          },
+          }] : []),
         ],
       },
       footer: {
@@ -179,6 +209,17 @@ const config = {
         darkTheme: prismThemes.dracula,
       },
     }),
+    
+  // Translation and internationalization settings (only when translations exist)
+  ...(hasTranslations
+    ? {
+        i18n: {
+          defaultLocale: translationsDefault,
+          locales: translationFolderNames,
+          localeConfigs: translationLocaleConfigs,
+        },
+      }
+    : {}),
 };
 
 module.exports = config;
