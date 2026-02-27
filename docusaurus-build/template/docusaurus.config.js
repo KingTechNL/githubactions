@@ -5,6 +5,7 @@
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
 const {themes: prismThemes} = require('prism-react-renderer');
+const {translate} = require('@docusaurus/Translate');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +24,7 @@ function humanize(str) {
 }
 
 // Dynamically generate navbar items from docs folder structure
-function getDocsNavbarItems() {
+function getDocsNavbarItems(useTranslations = false) {
   const docsPath = path.join(__dirname, 'docs');
   const items = [];
   
@@ -52,7 +53,13 @@ function getDocsNavbarItems() {
             type: 'docSidebar',
             sidebarId: sidebarId,
             position: 'left',
-            label: label,
+            label: useTranslations
+              ? translate({
+                  id: `item.label.${sidebarId}`,
+                  message: label,
+                  description: `Navbar label for docs folder ${entry.name}`,
+                })
+              : label,
             sortOrder: sortOrder,
           });
         } else if (mdFiles.length === 1) {
@@ -65,7 +72,13 @@ function getDocsNavbarItems() {
             type: 'doc',
             docId: docId,
             position: 'left',
-            label: label,
+            label: useTranslations
+              ? translate({
+                  id: `item.label.${sidebarId}`,
+                  message: label,
+                  description: `Navbar label for docs folder ${entry.name}`,
+                })
+              : label,
             sortOrder: sortOrder,
           });
         }
@@ -179,7 +192,7 @@ const config = {
         },
         items: [
           // If using navbar as root, generate items from docs folder structure; otherwise use default sidebar
-          ...(navbarAsRoot ? getDocsNavbarItems() : [
+          ...(navbarAsRoot ? getDocsNavbarItems(hasTranslations) : [
             {
               type: 'docSidebar',
               sidebarId: 'tutorialSidebar',
