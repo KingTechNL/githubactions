@@ -5,7 +5,6 @@
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
 const {themes: prismThemes} = require('prism-react-renderer');
-const {translate} = require('@docusaurus/Translate');
 const fs = require('fs');
 const path = require('path');
 
@@ -53,13 +52,7 @@ function getDocsNavbarItems(useTranslations = false) {
             type: 'docSidebar',
             sidebarId: sidebarId,
             position: 'left',
-            label: useTranslations
-              ? translate({
-                  id: `item.label.${sidebarId}`,
-                  message: label,
-                  description: `Navbar label for docs folder ${entry.name}`,
-                })
-              : label,
+            label: useTranslations ? sidebarId : label,
             sortOrder: sortOrder,
           });
         } else if (mdFiles.length === 1) {
@@ -72,13 +65,7 @@ function getDocsNavbarItems(useTranslations = false) {
             type: 'doc',
             docId: docId,
             position: 'left',
-            label: useTranslations
-              ? translate({
-                  id: `item.label.${sidebarId}`,
-                  message: label,
-                  description: `Navbar label for docs folder ${entry.name}`,
-                })
-              : label,
+            label: useTranslations ? sidebarId : label,
             sortOrder: sortOrder,
           });
         }
@@ -125,7 +112,7 @@ const logo = process.env.LOGO || 'https://www.gravatar.com/avatar/1c367716e9c649
 const favicon = process.env.FAVICON || 'https://www.gravatar.com/avatar/1c367716e9c649121b5b877ad2f1b72f'
 const navbarAsRoot = process.env.NAVBAR_AS_ROOT === 'true'; // Default: false unless explicitly set to 'true'
 const translationsDefault = process.env.TRANSLATIONS_DEFAULT || 'en';
-const translationsPath = process.env.TRANSLATIONS_PATH || 'i18n'; //TODO: I dont think we can change this path, as docusaurus expects the translations to be in the i18n folder in the root of the docusaurus site.
+const translationsPath = 'i18n';
 
 // Read translation folders to configure i18n locales
 const translationFolderNames = getTranslationFolderNames(translationsPath);

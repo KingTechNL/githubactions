@@ -286,8 +286,6 @@ runs:
       echo NAVBAR_AS_ROOT="$NAVBAR_AS_ROOT" >> $GITHUB_ENV
       export TRANSLATIONS_DEFAULT="${{ inputs.DefaultLanguage }}"
       echo TRANSLATIONS_DEFAULT="$TRANSLATIONS_DEFAULT" >> $GITHUB_ENV
-      export TRANSLATIONS_PATH="${{ inputs.TranslationsDir }}"
-      echo TRANSLATIONS_PATH="$TRANSLATIONS_PATH" >> $GITHUB_ENV
 
   # Replace environment variables in all files in the docusaurus site folder (e.g. config, sidebars, docs) with the values from the action inputs and environment variables. 
   # This allows to use environment variables in the docusaurus config and sidebars files, for example to set the site name, project name, url, baseUrl, etc.
