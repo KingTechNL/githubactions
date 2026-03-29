@@ -27,10 +27,8 @@ inputs:
     default: 'github-actions@users.noreply.github.com'
   token:
     description: >-
-      (Optional) Personal access token or other token with push rights. If left
-      empty the action will use `secrets.GITHUB_TOKEN` provided by the runner.
-    required: false
-    default: ''
+      Personal access token or other token with push rights.
+    required: true
   url:
     description: >-
       (Optional) The URL to host the page on. If left empty, the default GitHub Pages URL will be used.
@@ -63,7 +61,8 @@ runs:
 
         TOKEN="${TOKEN_INPUT}"
         if [ -z "${TOKEN}" ]; then
-          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          echo "Missing required input: token"
+          exit 1
         fi
 
         WORKDIR=$(mktemp -d)

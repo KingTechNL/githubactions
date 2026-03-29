@@ -17,7 +17,7 @@ The action works with GitHub's built-in Pages hosting, making it easy to publish
 | `commitMessage` | No | `Deploy to GitHub Pages` | The commit message to use for the deployment commit. |
 | `userName` | No | `github-actions` | The name to use for the Git commit author. |
 | `userEmail` | No | `github-actions@users.noreply.github.com` | The email to use for the Git commit author. |
-| `token` | No | `secrets.GITHUB_TOKEN` | Personal access token with push rights. Uses the default GitHub token if not specified. |
+| `token` | Yes |  | **Required.** Personal access token with push rights. The action will fail if not provided. |
 | `url` | No | '' | Custom domain URL for your GitHub Pages site (e.g., `docs.mycompany.com`). Creates a CNAME file automatically. |
 
 

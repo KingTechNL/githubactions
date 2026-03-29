@@ -31,6 +31,7 @@ jobs:
       uses: KingTech/KingTech.GithubActions/deploy-pages@main
       with:
         sourceDir: 'build'
+        token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Deploy Docusaurus Site
@@ -61,6 +62,7 @@ jobs:
       uses: KingTech/KingTech.GithubActions/deploy-pages@main
       with:
         sourceDir: './build'
+        token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## With Custom Domain
@@ -89,6 +91,7 @@ jobs:
       with:
         sourceDir: './dist'
         url: 'docs.mycompany.com'
+        token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 This automatically creates a CNAME file with your custom domain.
@@ -126,6 +129,7 @@ jobs:
       with:
         sourceDir: './dist'
         commitMessage: 'Deploy version ${{ steps.version.outputs.version }}'
+        token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Deploy to Custom Branch
@@ -153,6 +157,7 @@ jobs:
       with:
         sourceDir: './dist'
         targetBranch: 'production'
+        token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Remember to configure GitHub Pages to serve from this branch in repository settings.
