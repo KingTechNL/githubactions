@@ -31,6 +31,22 @@ function humanize(str) {
     .join(' ');
 }
 
+// Recursively count markdown files so nested docs folders are included
+function countMarkdownFilesRecursive(dirPath) {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  let count = 0;
+
+  for (const entry of entries) {
+    if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))) {
+      count += 1;
+    } else if (entry.isDirectory() && !entry.name.startsWith('.')) {
+      count += countMarkdownFilesRecursive(path.join(dirPath, entry.name));
+    }
+  }
+
+  return count;
+}
+
 // Dynamically generate sidebars from docs folder structure
 function generateSidebars() {
   // If not using navbar as root, return default sidebar structure
@@ -54,18 +70,15 @@ function generateSidebars() {
     
     for (const entry of entries) {
       if (entry.isDirectory() && !entry.name.startsWith('.')) {
-        // Count markdown files in the directory
+        // Count markdown files recursively to include nested subdirectories
         const dirPath = path.join(docsPath, entry.name);
-        const files = fs.readdirSync(dirPath, { withFileTypes: true });
-        const mdFiles = files.filter(f => 
-          f.isFile() && (f.name.endsWith('.md') || f.name.endsWith('.mdx'))
-        );
+        const markdownCount = countMarkdownFilesRecursive(dirPath);
         
-        // Only create a sidebar if there's more than one file
-        if (mdFiles.length > 1) {
+        // Create a sidebar for any top-level folder that contains docs
+        if (markdownCount > 0) {
           const sidebarId = entry.name.replace(/^\d+_/, '');
           
-          console.log(`Generating sidebar: ${entry.name} -> ${sidebarId} (${mdFiles.length} files)`);
+          console.log(`Generating sidebar: ${entry.name} -> ${sidebarId} (${markdownCount} files)`);
           
           sidebars[sidebarId] = [
             {
@@ -74,7 +87,7 @@ function generateSidebars() {
             },
           ];
         } else {
-          console.log(`Skipping sidebar for ${entry.name} (only ${mdFiles.length} file)`);
+          console.log(`Skipping sidebar for ${entry.name} (no docs found)`);
         }
       }
     }

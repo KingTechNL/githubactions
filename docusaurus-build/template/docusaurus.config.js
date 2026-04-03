@@ -22,6 +22,27 @@ function humanize(str) {
     .join(' ');
 }
 
+// Inspect folder content recursively so nested docs are counted
+function getDirectoryDocStats(dirPath) {
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  const directMdFiles = entries.filter(entry =>
+    entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))
+  );
+
+  let totalMdFiles = directMdFiles.length;
+  let hasSubdirectories = false;
+
+  for (const entry of entries) {
+    if (entry.isDirectory() && !entry.name.startsWith('.')) {
+      hasSubdirectories = true;
+      const nested = getDirectoryDocStats(path.join(dirPath, entry.name));
+      totalMdFiles += nested.totalMdFiles;
+    }
+  }
+
+  return { directMdFiles, totalMdFiles, hasSubdirectories };
+}
+
 // Dynamically generate navbar items from docs folder structure
 function getDocsNavbarItems(useTranslations = false) {
   const docsPath = path.join(__dirname, 'docs');
@@ -38,15 +59,17 @@ function getDocsNavbarItems(useTranslations = false) {
         const label = humanize(match ? match[2] : entry.name);
         const sortOrder = match ? parseInt(match[1], 10) : 999; // No prefix = sort last
         
-        // Count markdown files in the directory
+        // Count markdown files recursively so nested sections are included
         const dirPath = path.join(docsPath, entry.name);
-        const files = fs.readdirSync(dirPath, { withFileTypes: true });
-        const mdFiles = files.filter(f => 
-          f.isFile() && (f.name.endsWith('.md') || f.name.endsWith('.mdx'))
-        );
+        const { directMdFiles, totalMdFiles, hasSubdirectories } = getDirectoryDocStats(dirPath);
+
+        if (totalMdFiles === 0) {
+          console.log(`Skipping navbar item: ${entry.name} (no docs found)`);
+          continue;
+        }
         
-        // Use docSidebar for multiple files, doc link for single file
-        if (mdFiles.length > 1) {
+        // Use docSidebar when folder has nested folders or multiple docs
+        if (hasSubdirectories || totalMdFiles > 1) {
           console.log(`Navbar item: ${entry.name} -> docSidebar: ${sidebarId}, label: ${label}`);
           items.push({
             type: 'docSidebar',
@@ -55,10 +78,10 @@ function getDocsNavbarItems(useTranslations = false) {
             label: useTranslations ? sidebarId : label,
             sortOrder: sortOrder,
           });
-        } else if (mdFiles.length === 1) {
-          // Link directly to the single document (strip numeric prefixes)
+        } else if (directMdFiles.length === 1) {
+          // Link directly only when there is a single top-level doc and no nested folders
           const folderName = entry.name.replace(/^\d+_/, '');
-          const fileName = mdFiles[0].name.replace(/\.mdx?$/, '').replace(/^\d+_/, '');
+          const fileName = directMdFiles[0].name.replace(/\.mdx?$/, '').replace(/^\d+_/, '');
           const docId = `${folderName}/${fileName}`;
           console.log(`Navbar item: ${entry.name} -> doc: ${docId}, label: ${label}`);
           items.push({
@@ -137,7 +160,13 @@ const config = {
   url: url,
   baseUrl: baseUrl,
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    format: 'detect',
+    mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
   favicon: favicon,
   organizationName: brand, // Usually your GitHub org/user name.
   projectName: projectName, // Usually your repo name.
