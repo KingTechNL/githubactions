@@ -43,6 +43,44 @@ function getDirectoryDocStats(dirPath) {
   return { directMdFiles, totalMdFiles, hasSubdirectories };
 }
 
+// Read a category position from Docusaurus category metadata files
+function getCategoryPosition(dirPath) {
+  const jsonPath = path.join(dirPath, '_category_.json');
+  if (fs.existsSync(jsonPath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+      if (typeof parsed.position === 'number' && Number.isFinite(parsed.position)) {
+        return parsed.position;
+      }
+    } catch (error) {
+      console.warn(`Could not parse ${jsonPath}:`, error);
+    }
+  }
+
+  const yamlFiles = ['_category_.yml', '_category_.yaml'];
+  for (const fileName of yamlFiles) {
+    const yamlPath = path.join(dirPath, fileName);
+    if (!fs.existsSync(yamlPath)) {
+      continue;
+    }
+
+    try {
+      const yamlText = fs.readFileSync(yamlPath, 'utf8');
+      const match = yamlText.match(/^\s*position\s*:\s*(["']?)(-?\d+(?:\.\d+)?)\1\s*(?:#.*)?$/m);
+      if (match) {
+        const value = Number(match[2]);
+        if (Number.isFinite(value)) {
+          return value;
+        }
+      }
+    } catch (error) {
+      console.warn(`Could not read ${yamlPath}:`, error);
+    }
+  }
+
+  return null;
+}
+
 // Dynamically generate navbar items from docs folder structure
 function getDocsNavbarItems(useTranslations = false) {
   const docsPath = path.join(__dirname, 'docs');
@@ -57,19 +95,38 @@ function getDocsNavbarItems(useTranslations = false) {
         const match = entry.name.match(/^(\d+)_(.+)$/);
         const sidebarId = entry.name.replace(/^\d+_/, '');
         const label = humanize(match ? match[2] : entry.name);
-        const sortOrder = match ? parseInt(match[1], 10) : 999; // No prefix = sort last
+        const defaultSortOrder = match ? parseInt(match[1], 10) : 999; // No prefix = sort last
         
         // Count markdown files recursively so nested sections are included
         const dirPath = path.join(docsPath, entry.name);
         const { directMdFiles, totalMdFiles, hasSubdirectories } = getDirectoryDocStats(dirPath);
+        const categoryPosition = getCategoryPosition(dirPath);
+        const sortOrder = categoryPosition ?? defaultSortOrder;
 
         if (totalMdFiles === 0) {
           console.log(`Skipping navbar item: ${entry.name} (no docs found)`);
           continue;
         }
         
-        // Use docSidebar when folder has nested folders or multiple docs
-        if (hasSubdirectories || totalMdFiles > 1) {
+        // Check if there's an index.md file
+        const hasIndexFile = directMdFiles.some(f => f.name.toLowerCase() === 'index.md' || f.name.toLowerCase() === 'index.mdx');
+        const otherMdFiles = directMdFiles.filter(f => f.name.toLowerCase() !== 'index.md' && f.name.toLowerCase() !== 'index.mdx');
+        
+        // If there's an index.md and either no other files or only nested folders, link directly to index
+        if (hasIndexFile && (otherMdFiles.length === 0 || (otherMdFiles.length === 0 && hasSubdirectories))) {
+          const folderName = entry.name.replace(/^\d+_/, '');
+          const docId = `${folderName}/index`;
+          console.log(`Navbar item: ${entry.name} -> doc: ${docId}, label: ${label} (index.md)`);
+          items.push({
+            type: 'doc',
+            docId: docId,
+            position: 'left',
+            label: useTranslations ? sidebarId : label,
+            sortOrder: sortOrder,
+          });
+        }
+        // Use docSidebar when folder has nested folders or multiple docs (excluding index.md)
+        else if (hasSubdirectories || otherMdFiles.length > 0 || (hasIndexFile && otherMdFiles.length > 0)) {
           console.log(`Navbar item: ${entry.name} -> docSidebar: ${sidebarId}, label: ${label}`);
           items.push({
             type: 'docSidebar',
@@ -79,7 +136,7 @@ function getDocsNavbarItems(useTranslations = false) {
             sortOrder: sortOrder,
           });
         } else if (directMdFiles.length === 1) {
-          // Link directly only when there is a single top-level doc and no nested folders
+          // Link directly when there is a single top-level doc and no nested folders
           const folderName = entry.name.replace(/^\d+_/, '');
           const fileName = directMdFiles[0].name.replace(/\.mdx?$/, '').replace(/^\d+_/, '');
           const docId = `${folderName}/${fileName}`;
@@ -95,7 +152,7 @@ function getDocsNavbarItems(useTranslations = false) {
       }
     }
     
-    // Sort by numeric prefix (folders without prefix go last)
+    // Sort by category metadata position first, then fallback order
     items.sort((a, b) => a.sortOrder - b.sortOrder);
     
     // Remove sortOrder property before returning (not needed in final config)
