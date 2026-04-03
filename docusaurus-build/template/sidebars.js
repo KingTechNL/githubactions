@@ -12,40 +12,11 @@
 // @ts-check
 const fs = require('fs');
 const path = require('path');
+const {countMarkdownFilesRecursive, stripNumericPrefix} = require('./navigation-utils');
 
 // Set to true to use root-level folders as navbar items, false for default Docusaurus sidebar
 // Can be overridden by setting NAVBAR_AS_ROOT environment variable to 'true'
 const navbarAsRoot = process.env.NAVBAR_AS_ROOT === 'true'; // Default: false unless explicitly set to 'true'
-
-// Convert folder/file names to human-readable labels
-function humanize(str) {
-  return str
-    // Remove file extensions
-    .replace(/\.[^/.]+$/, '')
-    // Split on capital letters, underscores, and hyphens
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/[_-]/g, ' ')
-    // Capitalize first letter of each word
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-// Recursively count markdown files so nested docs folders are included
-function countMarkdownFilesRecursive(dirPath) {
-  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-  let count = 0;
-
-  for (const entry of entries) {
-    if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))) {
-      count += 1;
-    } else if (entry.isDirectory() && !entry.name.startsWith('.')) {
-      count += countMarkdownFilesRecursive(path.join(dirPath, entry.name));
-    }
-  }
-
-  return count;
-}
 
 // Dynamically generate sidebars from docs folder structure
 function generateSidebars() {
@@ -63,6 +34,7 @@ function generateSidebars() {
   
   // Otherwise, generate individual sidebars for each top-level folder
   const docsPath = path.join(__dirname, 'docs');
+  /** @type {Record<string, any[]>} */
   const sidebars = {};
   
   try {
@@ -76,7 +48,7 @@ function generateSidebars() {
         
         // Create a sidebar for any top-level folder that contains docs
         if (markdownCount > 0) {
-          const sidebarId = entry.name.replace(/^\d+_/, '');
+          const sidebarId = stripNumericPrefix(entry.name);
           
           console.log(`Generating sidebar: ${entry.name} -> ${sidebarId} (${markdownCount} files)`);
           

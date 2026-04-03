@@ -242,6 +242,7 @@ runs:
       fi
 
       ### Config files for docusaurus site.
+      export NEEDS_TEMPLATE_UTILS='false'
       if [ "${{ inputs.configFile }}" != '' ] && [ "${{ inputs.configFile }}" != '-' ]; then
         echo "Copying config file from ${{ inputs.configFile }}"
         cp "${{ inputs.configFile }}" "./${{ env.SITE_NAME_URI }}/docusaurus.config.js"
@@ -251,6 +252,7 @@ runs:
       elif [ "${{ inputs.configFile }}" == '' ]; then
         echo "No config file specified, downloading default KingTech config file from GitHub branch ${{ inputs.kingtechActionsBranch }}"
         wget -O "./${{ env.SITE_NAME_URI }}/docusaurus.config.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/docusaurus.config.js"
+        export NEEDS_TEMPLATE_UTILS='true'
       fi
 
       ### Sidebars files for docusaurus site.
@@ -263,6 +265,14 @@ runs:
       elif [ "${{ inputs.sideBarsFile }}" == '' ]; then
         echo "No sidebars file specified, downloading default KingTech sidebars file from GitHub branch ${{ inputs.kingtechActionsBranch }}"
         wget -O "./${{ env.SITE_NAME_URI }}/sidebars.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/sidebars.js"
+        export NEEDS_TEMPLATE_UTILS='true'
+      fi
+
+      if [ "$NEEDS_TEMPLATE_UTILS" == 'true' ]; then
+        echo "Downloading default KingTech navigation utils file from GitHub branch ${{ inputs.kingtechActionsBranch }}"
+        wget -O "./${{ env.SITE_NAME_URI }}/navigation-utils.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/navigation-utils.js"
+        echo "Downloading default KingTech translation utils file from GitHub branch ${{ inputs.kingtechActionsBranch }}"
+        wget -O "./${{ env.SITE_NAME_URI }}/translation-utils.js" "https://raw.githubusercontent.com/KingTechNL/githubactions/${{ inputs.kingtechActionsBranch }}/docusaurus-build/template/translation-utils.js"
       fi
 
       ### Setting local environment variables.
