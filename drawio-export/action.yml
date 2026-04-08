@@ -1,0 +1,64 @@
+# Static information for this action template
+# This action exports draw.io diagrams to image format.
+name: "Export draw.io diagrams to image"
+description: "Export draw.io diagrams to image format"
+
+# Inputs (parameters) for this action
+inputs:
+  input_file:
+    description: The path to the draw.io diagram file to be exported.
+    required: true
+  output_file:
+    description: The path where the exported image will be saved.
+    required: true
+  format:
+    description: The image format to export the draw.io diagrams to (e.g., png, jpg, svg).
+    required: false
+    default: 'png'
+  version:
+    description: The version of draw.io to use for exporting diagrams.
+    required: false
+    default: '29.6.1'
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check if draw.io is already installed
+      id: check_drawio
+      shell: bash
+      run: |
+        if command -v drawio >/dev/null 2>&1; then
+          echo "drawio is already installed."
+          echo "installed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "drawio is not installed."
+          echo "installed=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install draw.io CLI tool
+      if: steps.check_drawio.outputs.installed != 'true'
+      shell: bash
+      run: |
+        echo "Installing dependencies..."
+        sudo apt-get update
+        sudo apt-get install -y xvfb libasound2 wget
+        wget -q https://github.com/jgraph/drawio-desktop/releases/download/v${{ inputs.version }}/drawio-amd64-${{ inputs.version }}.deb -O drawio-amd64-${{ inputs.version }}.deb
+        # Use apt to install the local .deb so dependencies are resolved automatically
+        sudo apt-get install -y ./drawio-amd64-${{ inputs.version }}.deb
+      
+    - name: Headless export of design diagrams
+      shell: bash
+      run: |
+          set -euo pipefail
+          OUTPUT_FILE="${{ inputs.output_file }}"
+          INPUT_FILE="${{ inputs.input_file }}"
+          mkdir -p "$(dirname "$OUTPUT_FILE")"
+          test -f "$INPUT_FILE"
+          export ELECTRON_DISABLE_SANDBOX=1
+          export ELECTRON_EXTRA_LAUNCH_ARGS="--no-sandbox --disable-setuid-sandbox --disable-gpu"
+          unset DBUS_SESSION_BUS_ADDRESS || true
+          # Run the draw.io CLI tool in a headless environment using xvfb-run
+          xvfb-run -a drawio --export --format "${{ inputs.format }}" --transparent --output "$OUTPUT_FILE" "$INPUT_FILE"
+          test -f "$OUTPUT_FILE"
+          mkdir -p $(Build.ArtifactStagingDirectory)/diagrams
