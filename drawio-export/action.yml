@@ -40,9 +40,21 @@ runs:
       if: steps.check_drawio.outputs.installed != 'true'
       shell: bash
       run: |
+        set -euo pipefail
         echo "Installing dependencies..."
         sudo apt-get update
-        sudo apt-get install -y xvfb libasound2 wget
+        ASOUND_PACKAGE=""
+        if apt-cache show libasound2t64 >/dev/null 2>&1; then
+          ASOUND_PACKAGE="libasound2t64"
+        elif apt-cache show libasound2 >/dev/null 2>&1; then
+          ASOUND_PACKAGE="libasound2"
+        else
+          echo "Could not find a supported ALSA package (libasound2t64 or libasound2)." >&2
+          exit 1
+        fi
+
+        echo "Installing dependency package: $ASOUND_PACKAGE"
+        sudo apt-get install -y xvfb "$ASOUND_PACKAGE" wget
         wget -q https://github.com/jgraph/drawio-desktop/releases/download/v${{ inputs.version }}/drawio-amd64-${{ inputs.version }}.deb -O drawio-amd64-${{ inputs.version }}.deb
         # Use apt to install the local .deb so dependencies are resolved automatically
         sudo apt-get install -y ./drawio-amd64-${{ inputs.version }}.deb
