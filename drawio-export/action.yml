@@ -73,4 +73,3 @@ runs:
           # Run the draw.io CLI tool in a headless environment using xvfb-run
           xvfb-run -a drawio --export --format "${{ inputs.format }}" --transparent --output "$OUTPUT_FILE" "$INPUT_FILE"
           test -f "$OUTPUT_FILE"
-          mkdir -p $(Build.ArtifactStagingDirectory)/diagrams
