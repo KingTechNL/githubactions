@@ -21,7 +21,7 @@ The directories that are used for the source files to build documentation from a
 | `blogDir` | No | '' | The directory where blog post Markdown files are stored. If empty, looks for a `blog/` folder in the workspace. The '-' wild card can be used to keep the default generated blog folder. |
 | `srcDir` | No | '' | The directory where custom React components and pages are stored. If empty, looks for a `src/` folder in the workspace. The '-' wild card can be used to keep the default generated src folder. |
 | `staticDir` | No | '' | The directory containing static assets (images, CSS, etc.). If empty, looks for a `static/` folder in the workspace. The '-' wild card can be used to keep the default generated static folder. |
-| `targetDir` | Yes | `${{ github.workspace }}/publish` | The output directory where the generated static website will be stored. |
+| `targetDir` | No | `${{ github.workspace }}/publish` | The output directory where the generated static website will be stored. |
 
 #### Docusaurus build Configuration
 These inputs correspond to the `create-docusaurus` command that is executed as part of this command. For more details, please check the official [Docusaurus installation documentation](https://docusaurus.io/docs/installation).
@@ -48,7 +48,7 @@ This template is relatively vanilla and can be configured to your needs. If the 
 | `brand` | No | '' | The brand name to display in the generated website. |
 | `logo` | No | '' | Path to the logo image file to use in the website header. |
 | `favicon` | No | '' | Path to the favicon icon file. |
-| `NavbarFromRootDir` | No | '' | If set to true, the files and directories in the 'docs' root directory will be used to generate the navbar items in the docusaurus site. |
+| `NavbarFromRootDir` | No | 'false' | If set to true, the files and directories in the 'docs' root directory will be used to generate the navbar items in the docusaurus site. |
 | `DefaultLanguage` | No | 'en' | The default locale/language of the generated Docusaurus site. |
 | `TranslationsDir` | No | '' | Directory that contains your Docusaurus `i18n` translation files. If empty, the action will use `i18n/` from the workspace when present. The '-' wild card can be used to keep the default generated `i18n` folder. |
 
@@ -65,6 +65,6 @@ In case you don't want to use the KingTech Docusaurus templates, it is possible 
 
 | Input | Required | Default | Description |
 | ----- | -------- | ------- | ----------- |
-| `configFile` | No | '' | Path to a custom `docusaurus.config.js` file. If not specified, uses the default template configuration. |
-| `sideBarsFile` | No | '' | Path to a custom `sidebars.js` file defining the documentation sidebar structure. If not specified, uses the default template. |
+| `configFile` | No | '' | Path to a custom `docusaurus.config.js` file. If not specified, the action uses the packaged default template file from the action repository. |
+| `sideBarsFile` | No | '' | Path to a custom `sidebars.js` file defining the documentation sidebar structure. If not specified, the action uses the packaged default template file from the action repository. |
 | `replaceEnv` | No | 'false' | Whether to replace environment variable placeholders in configuration files (e.g., `${SITE_NAME}`). |

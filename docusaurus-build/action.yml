@@ -110,10 +110,6 @@ inputs:
     description: Optionally specify the node version to use, default is 'latest'.
     required: false
     default: 'latest'
-  kingtechActionsBranch:
-    description: The branch of the KingTech GitHub Actions repository to use for the default config and sidebars files. Default is 'main'.
-    required: false
-    default: 'main'
 
 runs:
   using: "composite"
