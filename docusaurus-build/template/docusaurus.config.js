@@ -115,16 +115,21 @@ const config = {
       },
     }),
     
-  // Translation and internationalization settings (only when translations exist)
-  ...(hasTranslations
+  // Translation and internationalization settings
+  // Always configure i18n, supporting both monolingual (no translations) and multilingual modes
+  i18n: hasTranslations
     ? {
-        i18n: {
-          defaultLocale: translationsDefault,
-          locales: translationFolderNames,
-          localeConfigs: translationLocaleConfigs,
+        defaultLocale: translationsDefault,
+        locales: [translationsDefault, ...translationFolderNames.filter(f => f !== translationsDefault)],
+        localeConfigs: {
+          [translationsDefault]: {label: translationsDefault},
+          ...translationLocaleConfigs,
         },
       }
-    : {}),
+    : {
+        defaultLocale: translationsDefault,
+        locales: [translationsDefault],
+      },
 };
 
 module.exports = config;
