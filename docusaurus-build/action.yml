@@ -107,9 +107,9 @@ inputs:
     required: false
     default: ''
   nodeVersion:
-    description: Optionally specify the node version to use, default is 'latest'.
+    description: Optionally specify the node version to use, default is '20' (LTS).
     required: false
-    default: 'latest'
+    default: '20'
 
 runs:
   using: "composite"

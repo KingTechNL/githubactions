@@ -36,12 +36,10 @@ const config = {
   url: url,
   baseUrl: baseUrl,
   onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn', // Will be replaced by 'hooks.onBrokenMarkdownLinks' in V4.  https://docusaurus.io/docs/api/docusaurus-config#hooks.onBrokenMarkdownLinks
   markdown: {
     format: 'detect',
     mermaid: true,
-    hooks: {
-      onBrokenMarkdownLinks: 'warn',
-    },
   },
   favicon: favicon,
   organizationName: brand, // Usually your GitHub org/user name.
