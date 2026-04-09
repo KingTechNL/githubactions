@@ -155,6 +155,13 @@ runs:
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ env.SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
 
+      ### Root-cause fix: webpackbar v6 stores custom fields in ProgressPlugin options,
+      ### which fails webpack schema validation in recent webpack versions.
+      ### Force webpackbar v7 for transitive dependencies.
+      cd "${{ env.SITE_NAME_URI }}"
+      npm pkg set "overrides.webpackbar=7.0.0"
+      npm install
+
   - name: Install additional npm packages
     if: inputs.packages != ''
     shell: bash
@@ -268,7 +275,6 @@ runs:
         echo "Using packaged default template utils files"
         cp "${{ github.action_path }}/template/navigation-utils.js" "./${{ env.SITE_NAME_URI }}/navigation-utils.js"
         cp "${{ github.action_path }}/template/translation-utils.js" "./${{ env.SITE_NAME_URI }}/translation-utils.js"
-        cp "${{ github.action_path }}/template/disable-invalid-progress-plugin.js" "./${{ env.SITE_NAME_URI }}/disable-invalid-progress-plugin.js"
       fi
 
       ### Setting local environment variables.
