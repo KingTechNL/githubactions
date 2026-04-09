@@ -86,9 +86,9 @@ inputs:
     default: ''
   # Docusaurus build parameters
   docusaurusVersion:
-    description: Optionally a docusaurus version can be specified for the markdown. 
+    description: Optionally a docusaurus version can be specified for the markdown. Default is 3.6.0 (stable, tested for webpack compatibility).
     required: false
-    default: 'latest'
+    default: '3.6.0'
   docusaurusVariant:
     description: The docusaurus template variant to use (javascript or typescript), default is javascript.
     required: false
@@ -150,7 +150,7 @@ runs:
     working-directory: ${{ github.action_path }}/docusaurus
     run: |
       ### Install docusaurus.
-      npm install create-docusaurus@3.9.2
+      npm install create-docusaurus@${{ inputs.docusaurusVersion }}
       ### Setup docusaurus site (base).
       echo 'building docusaurus site'
       npx create-docusaurus@${{ inputs.docusaurusVersion }} "${{ env.SITE_NAME_URI }}" ${{ inputs.docusaurusTemplate }} --${{ inputs.docusaurusVariant }}
