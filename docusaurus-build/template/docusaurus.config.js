@@ -5,6 +5,7 @@
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
 const {themes: prismThemes} = require('prism-react-renderer');
+const disableInvalidProgressPlugin = require('./disable-invalid-progress-plugin');
 const {getDocsNavbarItems} = require('./navigation-utils');
 const {getTranslationsConfig} = require('./translation-utils');
 
@@ -61,6 +62,7 @@ const config = {
       },
     ],
   ],
+  plugins: [disableInvalidProgressPlugin],
   stylesheets: [
     {
       href: 'https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css',
