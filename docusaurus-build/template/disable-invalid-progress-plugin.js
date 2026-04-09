@@ -7,6 +7,9 @@ module.exports = function disableInvalidProgressPlugin() {
       }
 
       const originalCount = config.plugins.length;
+      const pluginNames = config.plugins.map((plugin) => plugin?.constructor?.name || typeof plugin);
+      console.log(`Webpack plugins before filtering: ${pluginNames.join(', ')}`);
+
       config.plugins = config.plugins.filter((plugin) => {
         if (!plugin || typeof plugin !== 'object') {
           return true;
@@ -14,8 +17,21 @@ module.exports = function disableInvalidProgressPlugin() {
 
         const pluginLike = /** @type {{[key: string]: unknown}} */ (plugin);
         const constructorName = plugin.constructor?.name || '';
+        const optionsLike =
+          (pluginLike.options && typeof pluginLike.options === 'object' ? /** @type {{[key: string]: unknown}} */ (pluginLike.options) : null) ||
+          (pluginLike._options && typeof pluginLike._options === 'object' ? /** @type {{[key: string]: unknown}} */ (pluginLike._options) : null);
+
+        const hasInvalidProgressFields =
+          ('reporter' in pluginLike ||
+            'reporters' in pluginLike ||
+            'name' in pluginLike ||
+            'color' in pluginLike ||
+            (optionsLike !== null &&
+              ('reporter' in optionsLike || 'reporters' in optionsLike || 'name' in optionsLike || 'color' in optionsLike)));
+
         const hasWebpackBarShape =
           constructorName === 'WebpackBar' ||
+          (constructorName === 'ProgressPlugin' && hasInvalidProgressFields) ||
           (('reporter' in pluginLike || 'reporters' in pluginLike) &&
             ('name' in pluginLike || 'color' in pluginLike));
 
