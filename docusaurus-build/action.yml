@@ -86,9 +86,9 @@ inputs:
     default: ''
   # Docusaurus build parameters
   docusaurusVersion:
-    description: Optionally a docusaurus version can be specified for the markdown. Default is 3.6.0 (stable, tested for webpack compatibility).
+    description: Optionally a docusaurus version can be specified for the markdown. Default is 3.10.0.
     required: false
-    default: '3.6.0'
+    default: '3.10.0'
   docusaurusVariant:
     description: The docusaurus template variant to use (javascript or typescript), default is javascript.
     required: false
