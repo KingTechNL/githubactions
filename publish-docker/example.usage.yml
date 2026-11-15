@@ -25,3 +25,5 @@ jobs:
         image_name: "myDockerImage"
         tag: "latest" #Optional
         docker_file: "Dockerfile" #Optional
+        # cache: "true" # Optional; defaults to false (disabled)
+        # platforms: "linux/amd64" # Optional; defaults to linux/amd64,linux/arm64

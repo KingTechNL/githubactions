@@ -31,7 +31,7 @@ These inputs correspond to the `create-docusaurus` command that is executed as p
 | `docusaurusVersion` | No | 'latest' | The version of Docusaurus to use for building the site. |
 | `docusaurusVariant` | No | 'javascript' | The template variant to use: 'javascript' or 'typescript'. |
 | `docusaurusTemplate` | No | 'classic' | The Docusaurus template to use (typically 'classic'). |
-| `nodeVersion` | No | 'latest' | The Node.js version to use for building the site. |
+| `nodeVersion` | No | '24' | The Node.js version to use for building the site. Use a stable version compatible with the selected Docusaurus version. |
 | `npmCache` | No | '' | Path to npm cache directory to speed up dependency installation. |
 
 #### KingTech Docusaurus template
