@@ -21,6 +21,14 @@ inputs:
     description: "name of the dockerfile to use. Default: Dockerfile"
     required: false
     default: "Dockerfile"
+  cache:
+    description: "Whether to use the Docker build cache"
+    required: false
+    default: "false"
+  platforms:
+    description: "Target platforms for the Docker build"
+    required: false
+    default: "linux/amd64,linux/arm64"
 
 runs:
   using: "composite"
@@ -77,4 +85,12 @@ runs:
     # Build and publish the docker image
     - name: docker build
       shell: bash
-      run: docker buildx build --no-cache --platform linux/amd64,linux/arm64 ${{ env.DOCKER_TAGS }} --push . -f ${{inputs.docker_file}}
+      env:
+        DOCKER_CACHE: ${{ inputs.cache }}
+      run: |
+        case "$DOCKER_CACHE" in
+          true) CACHE_FLAG="" ;;
+          false) CACHE_FLAG="--no-cache" ;;
+          *) echo "Invalid cache value '$DOCKER_CACHE'; expected 'true' or 'false'." >&2; exit 1 ;;
+        esac
+        docker buildx build $CACHE_FLAG --platform ${{ inputs.platforms }} ${{ env.DOCKER_TAGS }} --push . -f ${{inputs.docker_file}}
