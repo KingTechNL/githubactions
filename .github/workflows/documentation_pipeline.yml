@@ -29,6 +29,7 @@ jobs:
     - name: Build docusaurus site
       uses: kingtechnl/githubactions/docusaurus-build@main
       with:
+        nodeVersion: '24'
         targetDir: '${{ github.workspace }}/_publish'
         siteName: 'KingTech Actions'
         baseUrl: '/'
